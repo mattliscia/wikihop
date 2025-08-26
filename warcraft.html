@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OSRS Wiki Game – srcdoc embed</title>
+<title>Warcraft Game – srcdoc embed</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="header.js"></script>
 </head>
@@ -11,115 +11,60 @@
 
 
   <main class="p-4">
-    <div class="max-w-7xl mx-auto">
-      <!-- Mobile Layout: Sidebar elements stacked above iframe -->
-      <div class="block lg:hidden space-y-3 mb-4">
-        <!-- Game Stats - Mobile -->
-        <div class="bg-slate-800 rounded-lg border border-slate-700 p-3">
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="text-sm font-semibold text-yellow-400">Game Stats</h3>
-            <button id="btnNewMobile" class="px-2 py-1 rounded bg-slate-700 hover:bg-slate-600 text-xs">New round</button>
+    <div class="flex gap-4 max-w-7xl mx-auto">
+      <!-- Main Content Area (75%) -->
+      <div class="flex-1">
+        <div class="rounded-xl overflow-hidden shadow ring-1 ring-slate-800">
+          <!-- No allow-same-origin needed; fewer warnings, safer. -->
+          <iframe id="wikiFrame" class="w-full h-[80vh] bg-white" sandbox="allow-scripts"></iframe>
+        </div>
+        <p class="mt-2 text-xs text-slate-400">
+          Content © Warcraft Wiki contributors (CC BY-SA).
+        </p>
+      </div>
+      
+      <!-- Sidebar (25%) -->
+      <div class="w-80 flex-shrink-0">
+        <!-- Game Stats -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
+            <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-xs">
+          <div class="grid grid-cols-2 gap-3 text-sm">
             <div class="bg-slate-700 rounded p-2">
               <div class="text-slate-400">Clicks</div>
-              <div class="font-bold text-yellow-400" id="clicksMobile">0</div>
+              <div class="font-bold text-yellow-400" id="clicks">0</div>
             </div>
             <div class="bg-slate-700 rounded p-2">
               <div class="text-slate-400">Time</div>
-              <div class="font-bold text-purple-400" id="timerMobile">0:00</div>
+              <div class="font-bold text-purple-400" id="timer">0:00</div>
             </div>
           </div>
         </div>
         
-        <!-- Destination Info - Mobile -->
-        <div id="destinationInfoMobile" class="bg-slate-800 rounded-lg border border-slate-700 p-3">
-          <h2 class="text-sm font-bold mb-2">Target Page:</h2>
-          <div class="flex items-center gap-2 mb-2">
-            <div id="destImageMobile" class="hidden">
-              <img id="destImageSrcMobile" class="w-8 h-8 object-contain rounded" alt="Destination image">
+        <!-- Destination Info -->
+        <div id="destinationInfo" class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <h2 class="text-xl font-bold flex-1">Target Page:</h2>
+          <div class="flex items-center gap-3 mb-3">
+            <div id="destImage" class="hidden">
+              <img id="destImageSrc" class="w-16 h-16 object-contain rounded-lg" alt="Destination image">
             </div>
-            <a href="" class="text-sm font-bold text-green-400 flex-1 hover:text-green-300" id="destTitleMobile" target="_blank"></a>
+            <h2 class="text-2xl font-bold text-green-400 flex-1" id="destTitle"></h2>
+            
           </div>
-          <p id="destDescriptionMobile" class="text-slate-300 text-xs leading-relaxed">
+          <p id="destDescription" class="text-slate-300 text-sm leading-relaxed">
             Click "New round" to start a game and see your destination here.
           </p>
         </div>
         
-        <!-- Navigation History - Mobile -->
-        <div class="bg-slate-800 rounded-lg border border-slate-700 p-3">
-          <h3 class="text-sm font-semibold text-amber-400 mb-2">Your Path</h3>
-          <div id="pathHistoryMobile" class="space-y-1 max-h-24 overflow-y-auto">
-            <p class="text-slate-400 text-xs">No pages visited yet.</p>
+        <!-- Navigation History -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+          <h3 class="text-lg font-semibold text-blue-400 mb-3">Your Path</h3>
+          <div id="pathHistory" class="space-y-2 max-h-96 overflow-y-auto">
+            <p class="text-slate-400 text-sm">No pages visited yet.</p>
           </div>
         </div>
-      </div>
-
-      <!-- Desktop Layout: Sidebar and main content side by side -->
-      <div class="hidden lg:flex gap-4">
-        <!-- Main Content Area (75%) -->
-        <div class="flex-1">
-          <div class="rounded-xl overflow-hidden shadow ring-1 ring-slate-800">
-            <!-- No allow-same-origin needed; fewer warnings, safer. -->
-            <iframe id="wikiFrame" class="w-full h-[80vh] bg-white" sandbox="allow-scripts"></iframe>
-          </div>
-          <p class="mt-2 text-xs text-slate-400">
-            Content © Old School RuneScape Wiki contributors (CC BY-SA).
-          </p>
-        </div>
-        
-        <!-- Sidebar (25%) -->
-        <div class="w-80 flex-shrink-0">
-          <!-- Game Stats -->
-          <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
-            <div class="flex justify-between items-center mb-3">
-              <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
-              <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
-            </div>
-            <div class="grid grid-cols-2 gap-3 text-sm">
-              <div class="bg-slate-700 rounded p-2">
-                <div class="text-slate-400">Clicks</div>
-                <div class="font-bold text-yellow-400" id="clicks">0</div>
-              </div>
-              <div class="bg-slate-700 rounded p-2">
-                <div class="text-slate-400">Time</div>
-                <div class="font-bold text-purple-400" id="timer">0:00</div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Destination Info -->
-          <div id="destinationInfo" class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
-              <h2 class="text-xl font-bold flex-1">Target Page:</h2>
-            <div class="flex items-center gap-3 mb-3">
-              <div id="destImage" class="hidden">
-                <img id="destImageSrc" class="w-16 h-16 object-contain rounded-lg" alt="Destination image">
-              </div>
-              <a href="" class="text-2xl font-bold text-green-400 flex-1 hover:text-green-300" id="destTitle" target="_blank"></a>
-            </div>
-            <p id="destDescription" class="text-slate-300 text-sm leading-relaxed">
-              Click "New round" to start a game and see your destination here.
-            </p>
-          </div>
-          
-          <!-- Navigation History -->
-          <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
-            <h3 class="text-lg font-semibold text-amber-400 mb-3">Your Path</h3>
-            <div id="pathHistory" class="space-y-2 max-h-96 overflow-y-auto">
-              <p class="text-slate-400 text-sm">No pages visited yet.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile iframe (full width) -->
-      <div class="block lg:hidden">
-        <div class="rounded-xl overflow-hidden shadow ring-1 ring-slate-800">
-          <iframe id="wikiFrameMobile" class="w-full h-[70vh] bg-white" sandbox="allow-scripts"></iframe>
-        </div>
-        <p class="mt-2 text-xs text-slate-400">
-          Content © Old School RuneScape Wiki contributors (CC BY-SA).
-        </p>
       </div>
     </div>
   </main>
@@ -149,8 +94,8 @@
           <button id="btnCopyLink" class="w-full px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold">
             Copy Challenge Link
           </button>
-          <button id="btnShareTwitter" class="w-full px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-lg text-white font-semibold">
-            Share on X
+          <button id="btnShareTwitter" class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold">
+            Share on Twitter/X
           </button>
           
           <button id="btnCloseWin" class="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white font-semibold">
@@ -161,11 +106,12 @@
     </div>
   </div>
 
-  <script src="footer.js"></script>
-
   <script>
-  const API  = 'https://oldschool.runescape.wiki/api.php';
-  const SITE = 'https://oldschool.runescape.wiki';
+  // Get current wiki configuration
+  const API = 'https://warcraft.wiki.gg/api.php';
+  const SITE = 'https://warcraft.wiki.gg';
+
+
 
   let startTitle=null, targetTitle=null, currentTitle=null;
   let clickCount=0, startTimeMs=0, timerInterval=null, path=[];
@@ -194,15 +140,7 @@
   }
 
   function fmtTime(ms){ const s=Math.floor(ms/1000), m=Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; }
-  function startTimer(){ 
-    stopTimer(); 
-    startTimeMs=Date.now(); 
-    timerInterval=setInterval(()=>{
-      const timeStr = fmtTime(Date.now()-startTimeMs);
-      document.getElementById('timer').textContent = timeStr;
-      document.getElementById('timerMobile').textContent = timeStr;
-    },250); 
-  }
+  function startTimer(){ stopTimer(); startTimeMs=Date.now(); timerInterval=setInterval(()=>{document.getElementById('timer').textContent=fmtTime(Date.now()-startTimeMs)},250); }
   function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; }
   async function j(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
   async function randTitle(){ const d=await j(`${API}?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`); return d.query.random[0].title; }
@@ -213,13 +151,13 @@
     if (title.includes('(disambiguation)') || title.includes('(Disambiguation)')) {
       return false;
     }
+
+    if (title.toLowerCase().includes('version')) {
+      return false;
+    }
     
     // Skip transcript pages
     if (title.toLowerCase().includes('transcript')) {
-      return false;
-    }
-
-    if (title.toLowerCase().includes('clue scroll')) {
       return false;
     }
     
@@ -233,77 +171,62 @@
       return false;
     }
     
+    // Skip non-English language pages
+    const languagePatterns = [
+      /^[A-Za-z]+:/,  // Language prefixes like "Spanish:", "French:", etc.
+      /\/[A-Za-z]{2}$/,  // Language suffixes like "/es", "/fr", "/de"
+      /\([A-Za-z]{2}\)$/,  // Language codes in parentheses like "(es)", "(fr)"
+      /^[A-Za-z]{2}\//,  // Language codes at start like "es/", "fr/"
+      /\/[A-Za-z]{2}\//,  // Language codes in path like "/es/", "/fr/"
+    ];
+    
+    for (const pattern of languagePatterns) {
+      if (pattern.test(title)) {
+        console.log('Filtered out non-English page:', title);
+        return false;
+      }
+    }
+    
+
+    
     return true;
   }
   async function norm(t){ const d=await j(`${API}?action=query&redirects=1&titles=${encodeURIComponent(t)}&format=json&origin=*`); const id=Object.keys(d.query.pages)[0]; return d.query.pages[id].title; }
   
   // Update path history display
   function updatePathHistory() {
-    // Update desktop path history
     const pathHistory = document.getElementById('pathHistory');
     if (path.length === 0) {
       pathHistory.innerHTML = '<p class="text-slate-400 text-sm">No pages visited yet.</p>';
-    } else {
-      pathHistory.innerHTML = path.map((title, index) => {
-        const isCurrent = index === path.length - 1;
-        const isStart = index === 0;
-        const isTarget = title === targetTitle;
-        
-        let bgClass = 'bg-slate-700';
-        let textClass = 'text-slate-300';
-        
-        if (isCurrent) {
-          bgClass = 'bg-amber-600';
-          textClass = 'text-white';
-        } else if (isStart) {
-          bgClass = 'bg-green-600';
-          textClass = 'text-white';
-        } else if (isTarget) {
-          bgClass = 'bg-yellow-600';
-          textClass = 'text-white';
-        }
-        
-        return `
-          <button onclick="goToPage(${index})" 
-                  class="w-full text-left p-2 rounded ${bgClass} ${textClass} hover:opacity-80 transition-opacity text-sm">
-            ${index + 1}. ${title}
-          </button>
-        `;
-      }).join('');
+      return;
     }
-
-    // Update mobile path history
-    const pathHistoryMobile = document.getElementById('pathHistoryMobile');
-    if (path.length === 0) {
-      pathHistoryMobile.innerHTML = '<p class="text-slate-400 text-xs">No pages visited yet.</p>';
-    } else {
-      pathHistoryMobile.innerHTML = path.map((title, index) => {
-        const isCurrent = index === path.length - 1;
-        const isStart = index === 0;
-        const isTarget = title === targetTitle;
-        
-        let bgClass = 'bg-slate-700';
-        let textClass = 'text-slate-300';
-        
-        if (isCurrent) {
-          bgClass = 'bg-amber-600';
-          textClass = 'text-white';
-        } else if (isStart) {
-          bgClass = 'bg-green-600';
-          textClass = 'text-white';
-        } else if (isTarget) {
-          bgClass = 'bg-yellow-600';
-          textClass = 'text-white';
-        }
-        
-        return `
-          <button onclick="goToPage(${index})" 
-                  class="w-full text-left p-1 rounded ${bgClass} ${textClass} hover:opacity-80 transition-opacity text-xs">
-            ${index + 1}. ${title}
-          </button>
-        `;
-      }).join('');
-    }
+    
+    pathHistory.innerHTML = path.map((title, index) => {
+      const isCurrent = index === path.length - 1;
+      const isStart = index === 0;
+      const isTarget = title === targetTitle;
+      
+      let bgClass = 'bg-slate-700';
+      let textClass = 'text-slate-300';
+      
+      if (isCurrent) {
+        bgClass = 'bg-blue-600';
+        textClass = 'text-white';
+      } else if (isStart) {
+        bgClass = 'bg-green-600';
+        textClass = 'text-white';
+      } else if (isTarget) {
+        bgClass = 'bg-yellow-600';
+        textClass = 'text-white';
+      }
+      
+      return `
+        <button onclick="goToPage(${index})" 
+                class="w-full text-left p-2 rounded ${bgClass} ${textClass} hover:opacity-80 transition-opacity text-sm">
+          ${index + 1}. ${title}
+        </button>
+      `;
+    }).join('');
   }
   
   // Navigate to a specific page in history
@@ -327,8 +250,21 @@
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = data.parse.text;
       
-      // Find the first paragraph (usually in .mw-parser-output > p)
-      const firstP = tempDiv.querySelector('.mw-parser-output p');
+      // Find the first paragraph that's not inside an infobox
+      const allParagraphs = tempDiv.querySelectorAll('.mw-parser-output p');
+      let firstP = null;
+      
+      for (const p of allParagraphs) {
+        // Check if this paragraph is inside an infobox
+        const isInInfobox = p.closest('.infobox') !== null;
+        if (!isInInfobox) {
+          firstP = p;
+          break;
+        }
+      }
+      
+      console.log('Found paragraph outside infobox:', firstP);
+      
       if (firstP) {
         // Clean up the text (remove HTML tags, limit length)
         let text = firstP.textContent.trim();
@@ -336,20 +272,15 @@
           text = text.substring(0, 200) + '...';
         }
         
-        // Update destination info (desktop)
+        // Update destination info
         document.getElementById('destTitle').textContent = title;
-        document.getElementById('destTitle').href = `${SITE}/${title}`;
         document.getElementById('destDescription').textContent = text;
-        
-        // Update destination info (mobile)
-        document.getElementById('destTitleMobile').textContent = title;
-        document.getElementById('destTitleMobile').href = `${SITE}/${title}`;
-        document.getElementById('destDescriptionMobile').textContent = text;
         
         // Try to find and display an image
         const images = data.parse.images || [];
+        console.log('Available images:', images);
         
-        // Find an image that's not within a messagebox
+        // Find an image that's not within a messagebox or message-box element
         let imageFile = null;
         for (const img of images) {
           if (img.toLowerCase().includes('.png') || 
@@ -358,7 +289,7 @@
               img.toLowerCase().includes('.webp')) {
             
             // Check if this image is within a messagebox or message-box element
-            const imgElement = tempDiv.querySelector(`img[src*="${img.replace(/ /g, '_')}"]`);
+            const imgElement = tempDiv.querySelector(`img[alt="${img}"]`);
             if (imgElement) {
               const messageboxParent = imgElement.closest('.messagebox, .message-box');
               if (!messageboxParent) {
@@ -374,42 +305,88 @@
         }
         
         if (imageFile) {
-          const imageUrl = `https://oldschool.runescape.wiki/images/${imageFile.replace(/ /g, '_')}`;
-          // Update desktop image
-          document.getElementById('destImageSrc').src = imageUrl;
-          document.getElementById('destImage').classList.remove('hidden');
-          // Update mobile image
-          document.getElementById('destImageSrcMobile').src = imageUrl;
-          document.getElementById('destImageMobile').classList.remove('hidden');
+          console.log('Selected image file:', imageFile);
+          
+          // Look for the actual image URL in the HTML content
+          console.log('Looking for img with alt="' + imageFile + '"');
+          const imgElement = tempDiv.querySelector(`img[alt="${imageFile}"]`);
+          console.log('Found img element:', imgElement);
+          
+          // If not found by alt, try finding any img element
+          if (!imgElement) {
+            const allImgs = tempDiv.querySelectorAll('img');
+            console.log('All img elements:', allImgs);
+            const firstImg = allImgs[0];
+            if (firstImg) {
+              console.log('Using first img element:', firstImg);
+            }
+          }
+          
+          const imgToUse = imgElement || tempDiv.querySelector('img');
+          if (imgToUse) {
+            let imageUrl = imgToUse.src;
+            console.log('Found image URL in HTML:', imageUrl);
+            
+            // Handle URLs that already have localhost (browser-processed relative URLs)
+            if (imageUrl.includes('localhost:8000')) {
+              // Extract the path part after localhost:8000
+              const urlParts = imageUrl.split('localhost:8000');
+              if (urlParts.length > 1) {
+                imageUrl = SITE + urlParts[1];
+              }
+            } else if (imageUrl.startsWith('/')) {
+              // Convert relative URL to absolute URL
+              imageUrl = SITE + imageUrl;
+            } else if (imageUrl.startsWith('file://')) {
+              // Handle file:// URLs by converting to proper domain
+              imageUrl = imageUrl.replace('file://', SITE);
+            } else if (!imageUrl.startsWith('http')) {
+              // Handle other relative URLs
+              imageUrl = SITE + "/" + imageUrl;
+            }
+            // If it already starts with http, leave it as is
+            
+            console.log('Final image URL:', imageUrl);
+            document.getElementById('destImageSrc').src = imageUrl;
+            document.getElementById('destImage').classList.remove('hidden');
+          } else {
+            console.log('No matching img element found, hiding image');
+            document.getElementById('destImage').classList.add('hidden');
+          }
         } else {
           document.getElementById('destImage').classList.add('hidden');
-          document.getElementById('destImageMobile').classList.add('hidden');
         }
       }
     } catch (err) {
       console.log('Could not fetch target preview:', err);
-      // Update desktop elements
       document.getElementById('destTitle').textContent = 'Destination';
       document.getElementById('destDescription').textContent = 'Could not load destination info.';
       document.getElementById('destImage').classList.add('hidden');
-      // Update mobile elements
-      document.getElementById('destTitleMobile').textContent = 'Destination';
-      document.getElementById('destDescriptionMobile').textContent = 'Could not load destination info.';
-      document.getElementById('destImageMobile').classList.add('hidden');
     }
   }
 
   // Build a complete HTML doc for the iframe using the wiki's own headhtml bundle
   function buildSrcDoc({ html, head }) {
-    const safeHead = head.replace(/<script\b[\s\S]*?<\/script>/gi, ''); // keep only link/style
+    // More careful script removal - keep CSS-related scripts but remove others
+    const safeHead = head.replace(/<script\b[^>]*>(?!.*css|.*style)[\s\S]*?<\/script>/gi, '');
+    
+    // Ensure CSS links are properly formatted for the iframe
+    let processedHead = safeHead.replace(/href="\/([^"]*)"/g, `href="${SITE}/$1"`);
+    processedHead = processedHead.replace(/href='\/([^']*)'/g, `href='${SITE}/$1'`);
+    
     return `<!doctype html>
 <html class="client-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <base href="${SITE}/">
-${safeHead}
-
+${processedHead}
+<style>
+/* Make links blue */
+.mw-parser-output a {
+  color: #3b82f6 !important;
+}
+</style>
 </head>
 <body class="mediawiki skin-vector skin-vector-legacy">
 <div id="content" class="mw-body">
@@ -427,9 +404,55 @@ ${safeHead}
       if(dss && !img.srcset) img.srcset = dss;
       if(img.src && img.src.startsWith('//')) img.src = 'https:' + img.src;
       if(img.srcset && img.srcset.includes('//')) img.srcset = img.srcset.replace(/(^|,\\s*)\\/\\//g,'$1https://');
+      
+      // Fix relative image URLs
+      if(img.src && img.src.startsWith('/') && !img.src.startsWith('//')) {
+        img.src = '${SITE}' + img.src;
+      }
     });
   }
   fixImages(document);
+  
+  // Wait for CSS to load before showing content
+  function waitForCSS() {
+    var links = document.querySelectorAll('link[rel="stylesheet"]');
+    var loadedCount = 0;
+    var totalCount = links.length;
+    
+    if(totalCount === 0) {
+      // No external CSS, show content immediately
+      document.body.style.visibility = 'visible';
+      return;
+    }
+    
+    links.forEach(function(link) {
+      if(link.sheet) {
+        loadedCount++;
+      } else {
+        link.addEventListener('load', function() {
+          loadedCount++;
+          if(loadedCount >= totalCount) {
+            document.body.style.visibility = 'visible';
+          }
+        });
+        link.addEventListener('error', function() {
+          loadedCount++;
+          if(loadedCount >= totalCount) {
+            document.body.style.visibility = 'visible';
+          }
+        });
+      }
+    });
+    
+    // Fallback: show content after 2 seconds regardless
+    setTimeout(function() {
+      document.body.style.visibility = 'visible';
+    }, 2000);
+  }
+  
+  // Hide content initially, show after CSS loads
+  document.body.style.visibility = 'hidden';
+  waitForCSS();
 
   // Intercept internal wiki links and send target title to parent
   document.addEventListener('click', function(e){
@@ -454,18 +477,18 @@ ${safeHead}
     parent.postMessage({type:'link-log', href:href}, '*');
     
     // Handle external links
-    if (/^(https?:)?\\/\\//i.test(href) && !href.startsWith('${SITE}/w/') && !href.startsWith('/w/')) {
+    if (/^(https?:)?\\/\\//i.test(href) && !href.startsWith('${SITE}/wiki/') && !href.startsWith('/wiki/')) {
       console.log('External link detected, allowing normal navigation');
       return;
     }
     
     try{
       var u = new URL(href, '${SITE}');
-      if(!u.pathname.startsWith('/w/')) {
+      if(!u.pathname.startsWith('/wiki/')) {
         console.log('Non-wiki link detected, allowing normal navigation');
         return;
       }
-      var title = u.searchParams.get('title') || decodeURIComponent(u.pathname.replace(/^\\/w\\//,'')).replace(/_/g,' ');
+      var title = u.searchParams.get('title') || decodeURIComponent(u.pathname.replace(/^\\/wiki\\//,'')).replace(/_/g,' ');
       if(!title) {
         console.log('No title found in link, allowing normal navigation');
         return;
@@ -496,10 +519,11 @@ ${safeHead}
     currentTitle = canon;
     if(!path.length) path=[canon];
 
-    // Update both desktop and mobile iframes
-    const srcDoc = buildSrcDoc({ html, head });
-    document.getElementById('wikiFrame').srcdoc = srcDoc;
-    document.getElementById('wikiFrameMobile').srcdoc = srcDoc;
+    // Debug: Log the headhtml to see what CSS is being loaded
+    console.log('Head HTML from API:', head);
+    console.log('CSS links found:', (head.match(/<link[^>]*rel=["']stylesheet["'][^>]*>/gi) || []).length);
+
+    document.getElementById('wikiFrame').srcdoc = buildSrcDoc({ html, head });
     
     // Update path history display
     updatePathHistory();
@@ -525,9 +549,7 @@ ${safeHead}
     // Handle wiki navigation
     if(ev.data.type === 'wiki-nav') {
       const nextTitle = ev.data.title;
-      clickCount++; 
-      document.getElementById('clicks').textContent = String(clickCount);
-      document.getElementById('clicksMobile').textContent = String(clickCount);
+      clickCount++; document.getElementById('clicks').textContent = String(clickCount);
       path.push(nextTitle);
       renderPage(nextTitle);
     }
@@ -536,12 +558,8 @@ ${safeHead}
   async function newRound({keepStart=false, keepTarget=false} = {}){
     stopTimer(); clickCount=0; path=[];
     document.getElementById('clicks').textContent='0';
-    document.getElementById('clicksMobile').textContent='0';
     document.getElementById('timer').textContent='0:00';
-    document.getElementById('timerMobile').textContent='0:00';
-    const loadingHtml = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
-    document.getElementById('wikiFrame').srcdoc = loadingHtml;
-    document.getElementById('wikiFrameMobile').srcdoc = loadingHtml;
+    document.getElementById('wikiFrame').srcdoc = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
 
     // Get good titles (not too niche)
     if(!keepStart) {
@@ -603,12 +621,13 @@ ${safeHead}
   
   function shareToTwitter() {
     const timeElapsed = Date.now() - startTimeMs;
-    const text = `I completed the OSRS Wiki Game from "${startTitle}" to "${targetTitle}" in ${clickCount} clicks! 🎮 Can you beat my time?`;
+    const text = `I completed the ${currentWikiConfig.name} Wiki Game from "${startTitle}" to "${targetTitle}" in ${clickCount} clicks! 🎮 Can you beat my time?`;
     const url = generateChallengeLink();
     const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
     window.open(shareUrl, '_blank');
   }
   
+
   
   function copyChallengeLink() {
     const link = generateChallengeLink();
@@ -624,10 +643,11 @@ ${safeHead}
   
   // Event handlers
   document.getElementById('btnNew').onclick     = () => newRound();
-  document.getElementById('btnNewMobile').onclick = () => newRound();
   document.getElementById('btnCloseWin').onclick = () => { hideWinModal(); newRound(); };
   document.getElementById('btnShareTwitter').onclick = shareToTwitter;
   document.getElementById('btnCopyLink').onclick = copyChallengeLink;
+  
+
   
   // Initialize with URL parameters if present
   const urlParams = getUrlParams();

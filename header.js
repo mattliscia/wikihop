@@ -89,10 +89,9 @@ function generateHeader() {
           <!-- Current Game Badge and Home Link -->
           <div class="flex items-center space-x-4">
             <div class="flex items-center space-x-2">
-              <span class="text-2xl">${currentGame.icon}</span>
               <div class="text-right">
-                <div class="text-lg font-semibold ${currentGame.color}">${currentGame.name}</div>
-                <div class="text-xs text-slate-400">Current Game</div>
+                <div class="text-lg font-semibold">${window.location.pathname.split('/').pop().split('?')[0].split('.')[0].split(/[-_]/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ')}</div>
+                ${currentPage ? `<div class="text-xs text-slate-400">Current Game</div>` : ''}
               </div>
             </div>
             <a href="/" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">

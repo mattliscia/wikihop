@@ -353,9 +353,18 @@
       document.getElementById('destTitle').textContent = title;
       document.getElementById('destTitle').href = `${SITE}/${title}`;
       
-      if (firstP || tempDiv.querySelector('p')) {
+      // Find first paragraph not in infobox
+      let paragraphToUse = null;
+      const allParagraphs = tempDiv.querySelectorAll('.mw-parser-output p');
+      for (const p of allParagraphs) {
+        if (!p.closest('.infobox')) {
+          paragraphToUse = p;
+          break;
+        }
+      }
+
+      if (paragraphToUse) {
         // Clean up the text (remove HTML tags, limit length)
-        const paragraphToUse = firstP || tempDiv.querySelector('p');
         let text = paragraphToUse.textContent.trim();
         if (text.length > 200) {
           text = text.substring(0, 200) + '...';
