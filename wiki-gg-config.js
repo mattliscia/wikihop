@@ -10,28 +10,28 @@ const WIKI_GG_CONFIG = {
       site: 'https://wiki.gg'
     },
     
-    'satisfactory': {
-      name: 'Satisfactory',
-      api: 'https://satisfactory.wiki.gg/api.php',
-      site: 'https://satisfactory.wiki.gg'
+    'hearthstone': {
+      name: 'Hearthstone',
+      api: 'https://hearthstone.wiki.gg/api.php',
+      site: 'https://hearthstone.wiki.gg'
     },
     
-    'factorio': {
-      name: 'Factorio',
-      api: 'https://wiki.factorio.com/api.php',
-      site: 'https://wiki.factorio.com'
+    'warcraft': {
+      name: 'Warcraft',
+      api: 'https://warcraft.wiki.gg/api.php',
+      site: 'https://warcraft.wiki.gg'
     },
     
-    'dyson-sphere-program': {
-      name: 'Dyson Sphere Program',
-      api: 'https://dyson-sphere-program.wiki.gg/api.php',
-      site: 'https://dyson-sphere-program.wiki.gg'
+    'terraria': {
+      name: 'Terraria',
+      api: 'https://terraria.wiki.gg/api.php',
+      site: 'https://terraria.wiki.gg'
     },
     
-    'oxygen-not-included': {
-      name: 'Oxygen Not Included',
-      api: 'https://oxygennotincluded.fandom.com/api.php',
-      site: 'https://oxygennotincluded.fandom.com'
+    'cookie-clicker': {
+      name: 'Cookie Clicker',
+      api: 'https://cookieclicker.fandom.com/api.php',
+      site: 'https://cookieclicker.fandom.com'
     },
     
     'rimworld': {

@@ -71,18 +71,20 @@ function generateHeader() {
   const currentGame = WIKI_GAMES[currentPage];
   
   const headerHTML = `
-    <header class="bg-slate-800 border-b border-slate-700 shadow-lg">
+    <header class="mb-4 bg-slate-800 border-b border-slate-700 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 py-4">
         <!-- Main Header Row -->
         <div class="flex items-center justify-between">
           <!-- Logo and Title -->
-          <div class="flex items-center space-x-3">
-            <div class="text-3xl">🎯</div>
+          <a href="/">
+            <div class="flex items-center space-x-3">
+              <img src="images/logo.avif" alt="Wiki Game Logo" class="w-10 h-10">
             <div>
               <h1 class="text-2xl font-bold text-white">Wiki Game</h1>
-              <p class="text-sm text-slate-400">Navigate from start to target using only wiki links</p>
+              <p class="text-sm text-slate-400">Navigate through your favorite wikis in this addictive link-following minigame.</p>
             </div>
-          </div>
+            </div>
+          </a>
           
           <!-- Current Game Badge and Home Link -->
           <div class="flex items-center space-x-4">

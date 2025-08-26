@@ -44,11 +44,14 @@
         
         <!-- Destination Info -->
         <div id="destinationInfo" class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+
+          <h2 class="text-xl font-bold flex-1">Target Page:</h2>
           <div class="flex items-center gap-3 mb-3">
-            <h2 class="text-2xl font-bold text-green-400 flex-1" id="destTitle">Destination</h2>
             <div id="destImage" class="hidden">
               <img id="destImageSrc" class="w-16 h-16 object-cover rounded-lg" alt="Destination image">
             </div>
+            <a href="" class="text-2xl font-bold text-green-400 flex-1 hover:text-green-300" id="destTitle" target="_blank"></a>
+            
           </div>
           <p id="destDescription" class="text-slate-300 text-sm leading-relaxed">
             Click "New round" to start a game and see your destination here.
@@ -136,15 +139,59 @@
   async function j(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
   async function randTitle(){ const d=await j(`${API}?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`); return d.query.random[0].title; }
   
-  // Check if a title is too niche or problematic
+  // Check if a title is too niche or problematic (basic checks)
   function isGoodTitle(title) {
     // Skip disambiguation pages
     if (title.includes('(disambiguation)') || title.includes('(Disambiguation)')) {
       return false;
     }
+
+    if (title.includes('disambiguation')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('playstation')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('xbox')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('beta')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('preview')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('edition')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('1.')) {
+      return false;
+    }
     
     // Skip transcript pages
-    if (title.toLowerCase().includes('transcript')) {
+    if (title.toLowerCase().includes('java')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('launcher')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('special')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes('/')) {
+      return false;
+    }
+
+    if (title.toLowerCase().includes(':')) {
       return false;
     }
     
@@ -158,6 +205,68 @@
       return false;
     }
     
+    return true;
+  }
+
+  // Check if a page is actually a disambiguation page by examining its content
+  async function isDisambiguationPage(title) {
+    try {
+      // Fetch the page content
+      const url = `${API}?action=parse&format=json&formatversion=2&redirects=1` +
+                  `&page=${encodeURIComponent(title)}&prop=text&section=0&origin=*`;
+      const data = await j(url);
+      
+      // Check if the page content contains disambiguation indicators
+      const html = data.parse.text;
+      
+      // Look for disambiguation help links
+      if (html.includes('Help:Disambiguation') || 
+          html.includes('help:disambiguation') ||
+          html.includes('Wikipedia:Disambiguation') ||
+          html.includes('wikipedia:disambiguation')) {
+        return true;
+      }
+      
+      // Look for disambiguation templates or categories
+      if (html.includes('{{disambiguation') ||
+          html.includes('{{Disambiguation') ||
+          html.includes('Category:Disambiguation') ||
+          html.includes('category:disambiguation')) {
+        return true;
+      }
+      
+      // Look for common disambiguation page patterns
+      if (html.includes('This page lists articles associated with the title') ||
+          html.includes('This is a disambiguation page') ||
+          html.includes('may refer to:') ||
+          html.includes('can refer to:')) {
+        return true;
+      }
+      
+      return false;
+    } catch (err) {
+      console.log('Error checking disambiguation for:', title, err);
+      // If we can't check, assume it's not a disambiguation page to be safe
+      return false;
+    }
+  }
+
+  // Enhanced title checking that includes content verification
+  async function isGoodTitleEnhanced(title) {
+    // First do the basic checks
+    console.log('Checking if', title, 'is good');
+    if (!isGoodTitle(title)) {
+      return false;
+    }
+    console.log('Basic checks passed');
+
+    console.log('Checking if', title, 'is a disambiguation page');
+    
+    // Then check if it's actually a disambiguation page
+    if (await isDisambiguationPage(title)) {
+      return false;
+    }
+    console.log('Disambiguation check passed');
     return true;
   }
   async function norm(t){ const d=await j(`${API}?action=query&redirects=1&titles=${encodeURIComponent(t)}&format=json&origin=*`); const id=Object.keys(d.query.pages)[0]; return d.query.pages[id].title; }
@@ -242,6 +351,7 @@
       // Update destination info
       console.log('Updating destination title to:', title);
       document.getElementById('destTitle').textContent = title;
+      document.getElementById('destTitle').href = `${SITE}/${title}`;
       
       if (firstP || tempDiv.querySelector('p')) {
         // Clean up the text (remove HTML tags, limit length)
@@ -417,14 +527,16 @@ ${safeHead}
     document.getElementById('timer').textContent='0:00';
     document.getElementById('wikiFrame').srcdoc = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
 
-    // Get good titles (not too niche)
+    // Get good titles (not too niche) with enhanced checking
     if(!keepStart) {
-      do { startTitle = await norm(await randTitle()); } while(!isGoodTitle(startTitle));
+      do { 
+        startTitle = await norm(await randTitle()); 
+      } while(!(await isGoodTitleEnhanced(startTitle)));
     }
     if(!keepTarget){
       do { 
         targetTitle = await norm(await randTitle()); 
-      } while(targetTitle === startTitle || !isGoodTitle(targetTitle));
+      } while(targetTitle === startTitle || !(await isGoodTitleEnhanced(targetTitle)));
     }
 
 
