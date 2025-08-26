@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OSRS Wiki Game – srcdoc embed</title>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+
+
+  <main class="p-4">
+    <div class="flex gap-4 max-w-7xl mx-auto">
+      <!-- Main Content Area (75%) -->
+      <div class="flex-1">
+        <div class="rounded-xl overflow-hidden shadow ring-1 ring-slate-800">
+          <!-- No allow-same-origin needed; fewer warnings, safer. -->
+          <iframe id="wikiFrame" class="w-full h-[80vh] bg-white" sandbox="allow-scripts"></iframe>
+        </div>
+        <p class="mt-2 text-xs text-slate-400">
+          Content © Minecraft Wiki contributors (CC BY-SA).
+        </p>
+      </div>
+      
+      <!-- Sidebar (25%) -->
+      <div class="w-80 flex-shrink-0">
+        <!-- Game Stats -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
+            <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="bg-slate-700 rounded p-2">
+              <div class="text-slate-400">Clicks</div>
+              <div class="font-bold text-yellow-400" id="clicks">0</div>
+            </div>
+            <div class="bg-slate-700 rounded p-2">
+              <div class="text-slate-400">Time</div>
+              <div class="font-bold text-purple-400" id="timer">0:00</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Destination Info -->
+        <div id="destinationInfo" class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <div class="flex items-center gap-3 mb-3">
+            <h2 class="text-2xl font-bold text-green-400 flex-1" id="destTitle">Destination</h2>
+            <div id="destImage" class="hidden">
+              <img id="destImageSrc" class="w-16 h-16 object-cover rounded-lg" alt="Destination image">
+            </div>
+          </div>
+          <p id="destDescription" class="text-slate-300 text-sm leading-relaxed">
+            Click "New round" to start a game and see your destination here.
+          </p>
+        </div>
+        
+        <!-- Navigation History -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+          <h3 class="text-lg font-semibold text-blue-400 mb-3">Your Path</h3>
+          <div id="pathHistory" class="space-y-2 max-h-96 overflow-y-auto">
+            <p class="text-slate-400 text-sm">No pages visited yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Win Modal -->
+  <div id="winModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" onclick="hideWinModal()">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-xl" onclick="event.stopPropagation()">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-yellow-400 mb-4">You Won!</h2>
+        <div class="space-y-2 mb-6">
+          <p class="text-slate-300">In <span id="winClicks" class="font-bold text-yellow-400"></span> clicks</p>
+          <p class="text-slate-300">Time: <span id="winTime" class="font-bold text-purple-400"></span></p>
+        </div>
+        
+        <!-- Path Steps -->
+        <div class="mb-6 text-left">
+          <h3 class="text-sm font-semibold text-slate-300 mb-2">Your Path:</h3>
+          <div id="winPathSteps" class="text-xs text-slate-400 space-y-1"></div>
+        </div>
+        
+        <div class="space-y-3">
+          <button id="btnShareTwitter" class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold">
+            Share on Twitter/X
+          </button>
+          <button id="btnShareReddit" class="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white font-semibold">
+            Share on Reddit
+          </button>
+          <button id="btnCopyLink" class="w-full px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold">
+            Copy Challenge Link
+          </button>
+          <button id="btnCloseWin" class="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white font-semibold">
+            Play Again
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const API  = 'https://minecraft.wiki/api.php';
+  const SITE = 'https://minecraft.wiki';
+
+  let startTitle=null, targetTitle=null, currentTitle=null;
+  let clickCount=0, startTimeMs=0, timerInterval=null, path=[];
+  
+  // URL parameter handling
+  function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      start: params.get('start'),
+      target: params.get('target')
+    };
+  }
+  
+  function setUrlParams(start, target) {
+    const url = new URL(window.location);
+    url.searchParams.set('start', start);
+    url.searchParams.set('target', target);
+    window.history.replaceState({}, '', url);
+  }
+  
+  function clearUrlParams() {
+    const url = new URL(window.location);
+    url.searchParams.delete('start');
+    url.searchParams.delete('target');
+    window.history.replaceState({}, '', url);
+  }
+
+  function fmtTime(ms){ const s=Math.floor(ms/1000), m=Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; }
+  function startTimer(){ stopTimer(); startTimeMs=Date.now(); timerInterval=setInterval(()=>{document.getElementById('timer').textContent=fmtTime(Date.now()-startTimeMs)},250); }
+  function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; }
+  async function j(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+  async function randTitle(){ const d=await j(`${API}?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*`); return d.query.random[0].title; }
+  
+  // Check if a title is too niche or problematic
+  function isGoodTitle(title) {
+    // Skip disambiguation pages
+    if (title.includes('(disambiguation)') || title.includes('(Disambiguation)')) {
+      return false;
+    }
+    
+    // Skip transcript pages
+    if (title.toLowerCase().includes('transcript')) {
+      return false;
+    }
+    
+    // Skip money making guide pages
+    if (title.toLowerCase().includes('money making guide')) {
+      return false;
+    }
+    
+    // Skip any date/year patterns
+    if (/\d{4}/.test(title)) {
+      return false;
+    }
+    
+    return true;
+  }
+  async function norm(t){ const d=await j(`${API}?action=query&redirects=1&titles=${encodeURIComponent(t)}&format=json&origin=*`); const id=Object.keys(d.query.pages)[0]; return d.query.pages[id].title; }
+  
+  // Update path history display
+  function updatePathHistory() {
+    const pathHistory = document.getElementById('pathHistory');
+    if (path.length === 0) {
+      pathHistory.innerHTML = '<p class="text-slate-400 text-sm">No pages visited yet.</p>';
+      return;
+    }
+    
+    pathHistory.innerHTML = path.map((title, index) => {
+      const isCurrent = index === path.length - 1;
+      const isStart = index === 0;
+      const isTarget = title === targetTitle;
+      
+      let bgClass = 'bg-slate-700';
+      let textClass = 'text-slate-300';
+      
+      if (isCurrent) {
+        bgClass = 'bg-blue-600';
+        textClass = 'text-white';
+      } else if (isStart) {
+        bgClass = 'bg-green-600';
+        textClass = 'text-white';
+      } else if (isTarget) {
+        bgClass = 'bg-yellow-600';
+        textClass = 'text-white';
+      }
+      
+      return `
+        <button onclick="goToPage(${index})" 
+                class="w-full text-left p-2 rounded ${bgClass} ${textClass} hover:opacity-80 transition-opacity text-sm">
+          ${index + 1}. ${title}
+        </button>
+      `;
+    }).join('');
+  }
+  
+  // Navigate to a specific page in history
+  function goToPage(index) {
+    if (index >= 0 && index < path.length) {
+      // Render the selected page without modifying path or click count
+      renderPage(path[index]);
+      updatePathHistory();
+    }
+  }
+  
+  // Fetch target preview with image
+  async function fetchTargetPreview(title) {
+    try {
+      console.log('Fetching target preview for:', title);
+      // Fetch page content
+      const url = `${API}?action=parse&format=json&formatversion=2&redirects=1` +
+                  `&page=${encodeURIComponent(title)}&prop=text|images&section=0&origin=*`;
+      console.log('API URL:', url);
+      const data = await j(url);
+      console.log('API response:', data);
+      
+      // Extract first paragraph from the HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = data.parse.text;
+      
+      console.log('HTML content:', tempDiv.innerHTML.substring(0, 500) + '...');
+      console.log('Looking for .mw-parser-output p');
+      
+      // Find the first paragraph (usually in .mw-parser-output > p)
+      const firstP = tempDiv.querySelector('.mw-parser-output p');
+      console.log('Found paragraph:', firstP);
+      
+      // Try alternative selectors if the first one doesn't work
+      if (!firstP) {
+        console.log('Trying alternative selectors...');
+        const altP = tempDiv.querySelector('p');
+        console.log('Found any p tag:', altP);
+        if (altP) {
+          console.log('Using alternative p tag');
+        }
+      }
+      
+      // Update destination info
+      console.log('Updating destination title to:', title);
+      document.getElementById('destTitle').textContent = title;
+      
+      if (firstP || tempDiv.querySelector('p')) {
+        // Clean up the text (remove HTML tags, limit length)
+        const paragraphToUse = firstP || tempDiv.querySelector('p');
+        let text = paragraphToUse.textContent.trim();
+        if (text.length > 200) {
+          text = text.substring(0, 200) + '...';
+        }
+        
+        console.log('Updating destination description to:', text);
+        document.getElementById('destDescription').textContent = text;
+      } else {
+        // Fallback: show the title as description if no paragraph found
+        console.log('No paragraph found, using title as description');
+        document.getElementById('destDescription').textContent = `Navigate to: ${title}`;
+      }
+      
+      // Try to find and display an image
+      const images = data.parse.images || [];
+      const imageFile = images.find(img => 
+        img.toLowerCase().includes('.png') || 
+        img.toLowerCase().includes('.jpg') || 
+        img.toLowerCase().includes('.jpeg') ||
+        img.toLowerCase().includes('.webp')
+      );
+      
+      if (imageFile) {
+        const imageUrl = `https://minecraft.wiki/images/${imageFile.replace(/ /g, '_')}`;
+        document.getElementById('destImageSrc').src = imageUrl;
+        document.getElementById('destImage').classList.remove('hidden');
+      } else {
+        document.getElementById('destImage').classList.add('hidden');
+      }
+    } catch (err) {
+      console.log('Could not fetch target preview:', err);
+      document.getElementById('destTitle').textContent = 'Destination';
+      document.getElementById('destDescription').textContent = 'Could not load destination info.';
+      document.getElementById('destImage').classList.add('hidden');
+    }
+  }
+
+  // Build a complete HTML doc for the iframe using the wiki's own headhtml bundle
+  function buildSrcDoc({ html, head }) {
+    const safeHead = head.replace(/<script\b[\s\S]*?<\/script>/gi, ''); // keep only link/style
+    return `<!doctype html>
+<html class="client-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="${SITE}/">
+${safeHead}
+</head>
+<body class="mediawiki skin-vector skin-vector-legacy">
+<div id="content" class="mw-body">
+  <div id="mw-content-text" class="mw-body-content">
+    ${html}  <!-- includes .mw-parser-output -->
+  </div>
+</div>
+<script>
+(function(){
+  // Hydrate lazy/protocol-relative images
+  function fixImages(root){
+    root.querySelectorAll('img').forEach(function(img){
+      var ds=img.getAttribute('data-src'), dss=img.getAttribute('data-srcset');
+      if(ds && !img.src) img.src = ds;
+      if(dss && !img.srcset) img.srcset = dss;
+      if(img.src && img.src.startsWith('//')) img.src = 'https:' + img.src;
+      if(img.srcset && img.srcset.includes('//')) img.srcset = img.srcset.replace(/(^|,\\s*)\\/\\//g,'$1https://');
+    });
+  }
+  fixImages(document);
+
+  // Intercept internal wiki links and send target title to parent
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a'); if(!a) return;
+    var href = a.getAttribute('href')||'';
+    
+    // Handle anchor links (internal page navigation) - handle manually to avoid base href issues
+    if(href.startsWith('#')) {
+      console.log('Anchor link detected, handling manually');
+      e.preventDefault();
+      // Find the target element and scroll to it
+      var targetId = href.substring(1);
+      var targetElement = document.getElementById(targetId) || document.querySelector('[name="' + targetId + '"]');
+      if(targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+      return; // Don't log or send message
+    }
+    
+    // Log all non-anchor link attempts
+    console.log('Link clicked:', href);
+    parent.postMessage({type:'link-log', href:href}, '*');
+    
+    // Handle external links
+    if (/^(https?:)?\\/\\//i.test(href) && !href.startsWith('${SITE}/w/') && !href.startsWith('/w/')) {
+      console.log('External link detected, allowing normal navigation');
+      return;
+    }
+    
+    try{
+      var u = new URL(href, '${SITE}');
+      if(!u.pathname.startsWith('/w/')) {
+        console.log('Non-wiki link detected, allowing normal navigation');
+        return;
+      }
+      var title = u.searchParams.get('title') || decodeURIComponent(u.pathname.replace(/^\\/w\\//,'')).replace(/_/g,' ');
+      if(!title) {
+        console.log('No title found in link, allowing normal navigation');
+        return;
+      }
+      console.log('Wiki navigation to:', title);
+      e.preventDefault();
+      parent.postMessage({type:'wiki-nav', title:title}, '*');
+    }catch(err){
+      console.log('Error parsing link:', err, 'allowing normal navigation');
+    }
+  }, true);
+})();
+</scr` + `ipt>
+</body>
+</html>`;
+  }
+
+  // Fetch + render a page into the iframe
+  async function renderPage(title){
+    const url = `${API}?action=parse&format=json&formatversion=2&redirects=1` +
+                `&page=${encodeURIComponent(title)}&prop=text|headhtml&useskin=vector&origin=*`;
+    const data = await j(url);
+
+    const html  = data.parse.text;      // article HTML (.mw-parser-output inside)
+    const head  = data.parse.headhtml;  // full skin/site TemplateStyles bundle
+    const canon = data.parse.title;
+
+    currentTitle = canon;
+    if(!path.length) path=[canon];
+
+    document.getElementById('wikiFrame').srcdoc = buildSrcDoc({ html, head });
+    
+    // Update path history display
+    updatePathHistory();
+
+    // Win check
+    if (targetTitle && currentTitle === targetTitle) {
+      stopTimer();
+      showWinModal();
+    }
+  }
+
+  // Receive nav messages from iframe
+  window.addEventListener('message', (ev)=>{
+    if(!ev?.data) return;
+    
+    // Handle link logging
+    if(ev.data.type === 'link-log') {
+      console.log('Link attempted:', ev.data.href);
+      // You can also display this in the UI if desired
+      // For now, just logging to console
+    }
+    
+    // Handle wiki navigation
+    if(ev.data.type === 'wiki-nav') {
+      const nextTitle = ev.data.title;
+      clickCount++; document.getElementById('clicks').textContent = String(clickCount);
+      path.push(nextTitle);
+      renderPage(nextTitle);
+    }
+  });
+
+  async function newRound({keepStart=false, keepTarget=false} = {}){
+    stopTimer(); clickCount=0; path=[];
+    document.getElementById('clicks').textContent='0';
+    document.getElementById('timer').textContent='0:00';
+    document.getElementById('wikiFrame').srcdoc = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
+
+    // Get good titles (not too niche)
+    if(!keepStart) {
+      do { startTitle = await norm(await randTitle()); } while(!isGoodTitle(startTitle));
+    }
+    if(!keepTarget){
+      do { 
+        targetTitle = await norm(await randTitle()); 
+      } while(targetTitle === startTitle || !isGoodTitle(targetTitle));
+    }
+
+
+    startTimer();
+    await renderPage(startTitle);
+    
+    // Fetch and display target preview
+    await fetchTargetPreview(targetTitle);
+    
+    // Update path history
+    updatePathHistory();
+  }
+
+  // Win modal functions
+  function showWinModal() {
+    const modal = document.getElementById('winModal');
+    const timeElapsed = Date.now() - startTimeMs;
+    
+    document.getElementById('winClicks').textContent = clickCount;
+    document.getElementById('winTime').textContent = fmtTime(timeElapsed);
+    
+    // Display path steps
+    const pathSteps = document.getElementById('winPathSteps');
+    if (path.length > 0) {
+      pathSteps.innerHTML = path.map((title, index) => {
+        return `
+          <div class="flex items-center">
+            <span class="text-slate-500">${index + 1}.</span>
+            <span class="ml-1">${title}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      pathSteps.innerHTML = '<p class="text-slate-500">No path recorded</p>';
+    }
+    
+    modal.classList.remove('hidden');
+  }
+  
+  function hideWinModal() {
+    document.getElementById('winModal').classList.add('hidden');
+  }
+  
+  function generateChallengeLink() {
+    const url = new URL(window.location);
+    url.searchParams.set('start', startTitle);
+    url.searchParams.set('target', targetTitle);
+    return url.toString();
+  }
+  
+  function shareToTwitter() {
+    const timeElapsed = Date.now() - startTimeMs;
+    const text = `I completed the OSRS Wiki Game from "${startTitle}" to "${targetTitle}" in ${clickCount} clicks! 🎮 Can you beat my time?`;
+    const url = generateChallengeLink();
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+  }
+  
+  function shareToReddit() {
+    const timeElapsed = Date.now() - startTimeMs;
+    const title = `OSRS Wiki Game Challenge: ${startTitle} → ${targetTitle}`;
+    const text = `I completed this challenge in ${clickCount} clicks! Can you beat my score?\n\nChallenge link: ${generateChallengeLink()}`;
+    const shareUrl = `https://reddit.com/submit?title=${encodeURIComponent(title)}&text=${encodeURIComponent(text)}`;
+    window.open(shareUrl, '_blank');
+  }
+  
+  function copyChallengeLink() {
+    const link = generateChallengeLink();
+    navigator.clipboard.writeText(link).then(() => {
+      const btn = document.getElementById('btnCopyLink');
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    });
+  }
+  
+  // Event handlers
+  document.getElementById('btnNew').onclick     = () => newRound();
+  document.getElementById('btnCloseWin').onclick = () => { hideWinModal(); newRound(); };
+  document.getElementById('btnShareTwitter').onclick = shareToTwitter;
+  document.getElementById('btnShareReddit').onclick = shareToReddit;
+  document.getElementById('btnCopyLink').onclick = copyChallengeLink;
+  
+  // Initialize with URL parameters if present
+  const urlParams = getUrlParams();
+  if (urlParams.start && urlParams.target) {
+    startTitle = urlParams.start;
+    targetTitle = urlParams.target;
+    startTimer();
+    renderPage(startTitle);
+    fetchTargetPreview(targetTitle);
+  } else {
+    newRound();
+  }
+  </script>
+</body>
+</html>

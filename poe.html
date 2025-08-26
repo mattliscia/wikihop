@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>POE Wiki Game – srcdoc embed</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="header.js"></script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+
+
+  <main class="p-4">
+    <div class="flex gap-4 max-w-7xl mx-auto">
+      <!-- Main Content Area (75%) -->
+      <div class="flex-1">
+        <div class="rounded-xl overflow-hidden shadow ring-1 ring-slate-800">
+          <!-- No allow-same-origin needed; fewer warnings, safer. -->
+          <iframe id="wikiFrame" class="w-full h-[80vh] bg-white" sandbox="allow-scripts"></iframe>
+        </div>
+        <p class="mt-2 text-xs text-slate-400">
+          Content © Path of Exile Wiki contributors (CC BY-SA).
+        </p>
+      </div>
+      
+      <!-- Sidebar (25%) -->
+      <div class="w-80 flex-shrink-0">
+        <!-- Game Stats -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
+            <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div class="bg-slate-700 rounded p-2">
+              <div class="text-slate-400">Clicks</div>
+              <div class="font-bold text-yellow-400" id="clicks">0</div>
+            </div>
+            <div class="bg-slate-700 rounded p-2">
+              <div class="text-slate-400">Time</div>
+              <div class="font-bold text-purple-400" id="timer">0:00</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Destination Info -->
+        <div id="destinationInfo" class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+            <h2 class="text-xl font-bold flex-1">Target Page:</h2>
+          <div class="flex items-center gap-3 mb-3">
+            <div id="destImage" class="hidden">
+              <img id="destImageSrc" class="w-16 h-16 object-contain rounded-lg" alt="Destination image">
+            </div>
+            <h2 class="text-2xl font-bold text-green-400 flex-1" id="destTitle"></h2>
+            
+          </div>
+          <p id="destDescription" class="text-slate-300 text-sm leading-relaxed">
+            Click "New round" to start a game and see your destination here.
+          </p>
+        </div>
+        
+        <!-- Navigation History -->
+        <div class="bg-slate-800 rounded-lg border border-slate-700 p-4">
+          <h3 class="text-lg font-semibold text-blue-400 mb-3">Your Path</h3>
+          <div id="pathHistory" class="space-y-2 max-h-96 overflow-y-auto">
+            <p class="text-slate-400 text-sm">No pages visited yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Win Modal -->
+  <div id="winModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden" onclick="hideWinModal()">
+    <div class="bg-slate-800 rounded-xl p-6 max-w-md w-full mx-4 shadow-xl" onclick="event.stopPropagation()">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-yellow-400 mb-4">You Won!</h2>
+        <div class="flex justify-between items-center mb-6">
+          <div class="text-left">
+            <h3 class="text-sm font-semibold text-slate-300 mb-2">Your Path:</h3>
+            <div id="winPathSteps" class="text-xs text-slate-400 space-y-1"></div>
+          </div>
+          <div class="text-right self-start">
+            <p class="text-slate-300"><span id="winClicks" class="font-bold text-yellow-400"></span> clicks</p>
+            <p class="text-slate-300">Time: <span id="winTime" class="font-bold text-purple-400"></span></p>
+          </div>
+        </div>
+
+        <div class="mb-6 text-center">
+          <h3 class="text-lg font-semibold text-slate-300 mb-2">Challenge Your Friends!</h3>
+          <p class="text-sm text-slate-400">Share this exact challenge and see if your friends can beat your score.</p>
+        </div>
+        
+        <div class="space-y-3">
+          <button id="btnCopyLink" class="w-full px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-lg text-white font-semibold">
+            Copy Challenge Link
+          </button>
+          <button id="btnShareTwitter" class="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white font-semibold">
+            Share on Twitter/X
+          </button>
+          
+          <button id="btnCloseWin" class="w-full px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white font-semibold">
+            New Round
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const API  = 'https://www.poewiki.net/api.php';
+  const SITE = 'https://www.poewiki.net';
+
+  let startTitle=null, targetTitle=null, currentTitle=null;
+  let clickCount=0, startTimeMs=0, timerInterval=null, path=[];
+  
+  // URL parameter handling
+  function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+      start: params.get('start'),
+      target: params.get('target')
+    };
+  }
+  
+  function setUrlParams(start, target) {
+    const url = new URL(window.location);
+    url.searchParams.set('start', start);
+    url.searchParams.set('target', target);
+    window.history.replaceState({}, '', url);
+  }
+  
+  function clearUrlParams() {
+    const url = new URL(window.location);
+    url.searchParams.delete('start');
+    url.searchParams.delete('target');
+    window.history.replaceState({}, '', url);
+  }
+
+  function fmtTime(ms){ const s=Math.floor(ms/1000), m=Math.floor(s/60); return `${m}:${String(s%60).padStart(2,'0')}`; }
+  function startTimer(){ stopTimer(); startTimeMs=Date.now(); timerInterval=setInterval(()=>{document.getElementById('timer').textContent=fmtTime(Date.now()-startTimeMs)},250); }
+  function stopTimer(){ if(timerInterval) clearInterval(timerInterval); timerInterval=null; }
+  async function j(url){ const r=await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+  // Keep track of used random titles to avoid duplicates
+  let usedRandomTitles = [];
+  
+  async function randTitle(){ 
+    // If we've used all our cached titles, get more
+    if (usedRandomTitles.length === 0) {
+      let timestamp = Date.now();
+      try {
+        // Use generator=random instead of list=random for better randomness
+        const d = await j(`${API}?action=query&generator=random&grnnamespace=0&grnlimit=10&format=json&origin=*&_=${timestamp}`); 
+        usedRandomTitles = Object.values(d.query.pages).map(page => page.title);
+        console.log('Fetched new random titles:', usedRandomTitles);
+      } catch (err) {
+        console.error('Error fetching random titles:', err);
+        // Fallback to list=random
+        const d = await j(`${API}?action=query&list=random&rnnamespace=0&rnlimit=10&format=json&origin=*&_=${timestamp}`); 
+        usedRandomTitles = d.query.random.map(item => item.title);
+        console.log('Fallback: Fetched random titles:', usedRandomTitles);
+      }
+    }
+    
+    // Return and remove the first title from our cache
+    return usedRandomTitles.shift();
+  }
+  
+  // Check if a title is too niche or problematic
+  function isGoodTitle(title) {
+    console.log('Checking title:', title);
+    
+    // Skip disambiguation pages
+    if (title.includes('(disambiguation)') || title.includes('(Disambiguation)')) {
+      console.log('Rejected: disambiguation page');
+      return false;
+    }
+    
+    // Skip transcript pages
+    if (title.toLowerCase().includes('transcript')) {
+      console.log('Rejected: transcript page');
+      return false;
+    }
+    
+    // Skip money making guide pages
+    if (title.toLowerCase().includes('money making guide')) {
+      console.log('Rejected: money making guide');
+      return false;
+    }
+    
+    // Skip any date/year patterns
+    if (/\d{4}/.test(title)) {
+      console.log('Rejected: date/year pattern');
+      return false;
+    }
+    
+    // Skip very short titles (likely redirects or stubs)
+    if (title.length < 3) {
+      console.log('Rejected: too short');
+      return false;
+    }
+    
+    // Skip titles that are just numbers or special characters
+    if (/^[0-9\s\-_]+$/.test(title)) {
+      console.log('Rejected: just numbers/special chars');
+      return false;
+    }
+    
+    console.log('Title accepted:', title);
+    return true;
+  }
+  async function norm(t){ 
+    try {
+      const d = await j(`${API}?action=query&redirects=1&titles=${encodeURIComponent(t)}&format=json&origin=*`); 
+      const id = Object.keys(d.query.pages)[0]; 
+      const page = d.query.pages[id];
+      
+      // Check if page exists (missing property indicates non-existent page)
+      if (page.missing !== undefined) {
+        console.log(`Page "${t}" does not exist in POE wiki`);
+        return null;
+      }
+      
+      return page.title; 
+    } catch (err) {
+      console.log(`Error normalizing title "${t}":`, err);
+      return null;
+    }
+  }
+  
+  // Update path history display
+  function updatePathHistory() {
+    const pathHistory = document.getElementById('pathHistory');
+    if (path.length === 0) {
+      pathHistory.innerHTML = '<p class="text-slate-400 text-sm">No pages visited yet.</p>';
+      return;
+    }
+    
+    pathHistory.innerHTML = path.map((title, index) => {
+      const isCurrent = index === path.length - 1;
+      const isStart = index === 0;
+      const isTarget = title === targetTitle;
+      
+      let bgClass = 'bg-slate-700';
+      let textClass = 'text-slate-300';
+      
+      if (isCurrent) {
+        bgClass = 'bg-blue-600';
+        textClass = 'text-white';
+      } else if (isStart) {
+        bgClass = 'bg-green-600';
+        textClass = 'text-white';
+      } else if (isTarget) {
+        bgClass = 'bg-yellow-600';
+        textClass = 'text-white';
+      }
+      
+      return `
+        <button onclick="goToPage(${index})" 
+                class="w-full text-left p-2 rounded ${bgClass} ${textClass} hover:opacity-80 transition-opacity text-sm">
+          ${index + 1}. ${title}
+        </button>
+      `;
+    }).join('');
+  }
+  
+  // Navigate to a specific page in history
+  function goToPage(index) {
+    if (index >= 0 && index < path.length) {
+      // Render the selected page without modifying path or click count
+      renderPage(path[index]);
+      updatePathHistory();
+    }
+  }
+  
+  // Fetch target preview with image
+  async function fetchTargetPreview(title) {
+    try {
+      // Fetch page content
+      const url = `${API}?action=parse&format=json&formatversion=2&redirects=1` +
+                  `&page=${encodeURIComponent(title)}&prop=text|images&section=0&origin=*`;
+      const data = await j(url);
+      
+      // Check if parse data exists
+      if (!data.parse) {
+        console.log('No parse data for title:', title);
+        document.getElementById('destTitle').textContent = title;
+        document.getElementById('destDescription').textContent = 'Could not load destination info.';
+        document.getElementById('destImage').classList.add('hidden');
+        return;
+      }
+      
+      // Extract first paragraph from the HTML
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = data.parse.text;
+      
+      // Find the first paragraph (usually in .mw-parser-output > p)
+      const firstP = tempDiv.querySelector('.mw-parser-output p');
+      if (firstP) {
+        // Clean up the text (remove HTML tags, limit length)
+        let text = firstP.textContent.trim();
+        if (text.length > 200) {
+          text = text.substring(0, 200) + '...';
+        }
+        
+        // Update destination info
+        document.getElementById('destTitle').textContent = title;
+        document.getElementById('destDescription').textContent = text;
+        
+        // Try to find and display an image from the parsed HTML
+        const imgElement = tempDiv.querySelector('.mw-parser-output img');
+        if (imgElement) {
+          let imageUrl = imgElement.src;
+          
+          // If it's a relative URL, make it absolute
+          if (imageUrl.includes('localhost:8000')) {
+              // Extract the path part after localhost:8000
+              const urlParts = imageUrl.split('localhost:8000');
+              if (urlParts.length > 1) {
+                imageUrl = SITE + urlParts[1];
+              }
+            } else if (imageUrl.startsWith('/')) {
+            imageUrl = `https://www.poewiki.net${imageUrl}`;
+          } else if (imageUrl.startsWith('//')) {
+            imageUrl = `https:${imageUrl}`;
+          } else if (!imageUrl.startsWith('http')) {
+            imageUrl = `https://www.poewiki.net/${imageUrl}`;
+          }
+
+          // replace /file:// with ''
+          imageUrl = imageUrl.replace('/file://', '');
+          
+          console.log('Found image URL:', imageUrl);
+          document.getElementById('destImageSrc').src = imageUrl;
+          document.getElementById('destImage').classList.remove('hidden');
+        } else {
+          // Fallback to using the images property from API
+          const images = data.parse.images || [];
+          const imageFile = images.find(img => 
+            img.toLowerCase().includes('.png') || 
+            img.toLowerCase().includes('.jpg') || 
+            img.toLowerCase().includes('.jpeg') ||
+            img.toLowerCase().includes('.webp')
+          );
+          
+          if (imageFile) {
+            // For the fallback, we need to construct the full path
+            // This is less reliable but better than nothing
+            const imageUrl = `https://www.poewiki.net/images/${imageFile.replace(/ /g, '_')}`;
+            console.log('Fallback image URL:', imageUrl);
+            document.getElementById('destImageSrc').src = imageUrl;
+            document.getElementById('destImage').classList.remove('hidden');
+          } else {
+            document.getElementById('destImage').classList.add('hidden');
+          }
+        }
+      }
+    } catch (err) {
+      console.log('Could not fetch target preview:', err);
+      document.getElementById('destTitle').textContent = 'Destination';
+      document.getElementById('destDescription').textContent = 'Could not load destination info.';
+      document.getElementById('destImage').classList.add('hidden');
+    }
+  }
+
+  // Build a complete HTML doc for the iframe using the wiki's own headhtml bundle
+  function buildSrcDoc({ html, head }) {
+    const safeHead = head.replace(/<script\b[\s\S]*?<\/script>/gi, ''); // keep only link/style
+    return `<!doctype html>
+<html class="client-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<base href="${SITE}/">
+${safeHead}
+</head>
+<body class="mediawiki skin-vector skin-vector-legacy">
+<div id="content" class="mw-body">
+  <div id="mw-content-text" class="mw-body-content">
+    ${html}  <!-- includes .mw-parser-output -->
+  </div>
+</div>
+<script>
+(function(){
+  // Hydrate lazy/protocol-relative images and fix localhost URLs
+  function fixImages(root){
+    root.querySelectorAll('img').forEach(function(img){
+      var ds=img.getAttribute('data-src'), dss=img.getAttribute('data-srcset');
+      if(ds && !img.src) img.src = ds;
+      if(dss && !img.srcset) img.srcset = dss;
+      
+      // Fix localhost URLs in src
+      if(img.src && img.src.includes('localhost:8000')) {
+        var urlParts = img.src.split('localhost:8000');
+        if(urlParts.length > 1) {
+          img.src = 'https://www.poewiki.net' + urlParts[1];
+        }
+      }
+      
+      // Fix localhost URLs in srcset
+      if(img.srcset && img.srcset.includes('localhost:8000')) {
+        img.srcset = img.srcset.replace(/localhost:8000/g, 'www.poewiki.net');
+      }
+      
+      // Fix protocol-relative URLs
+      if(img.src && img.src.startsWith('//')) img.src = 'https:' + img.src;
+      if(img.srcset && img.srcset.includes('//')) {
+        img.srcset = img.srcset.split('//').join('https://');
+      }
+    });
+  }
+  fixImages(document);
+
+  // Intercept internal wiki links and send target title to parent
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a'); if(!a) return;
+    var href = a.getAttribute('href')||'';
+    
+    // Handle anchor links (internal page navigation) - handle manually to avoid base href issues
+    if(href.startsWith('#')) {
+      console.log('Anchor link detected, handling manually');
+      e.preventDefault();
+      // Find the target element and scroll to it
+      var targetId = href.substring(1);
+      var targetElement = document.getElementById(targetId) || document.querySelector('[name="' + targetId + '"]');
+      if(targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+      return; // Don't log or send message
+    }
+    
+    // Log all non-anchor link attempts
+    console.log('Link clicked:', href);
+    parent.postMessage({type:'link-log', href:href}, '*');
+    
+    // Handle external links
+    if (/^(https?:)?\\/\\//i.test(href) && !href.startsWith('${SITE}/w/') && !href.startsWith('/w/')) {
+      console.log('External link detected, allowing normal navigation');
+      return;
+    }
+    
+    try{
+      var u = new URL(href, '${SITE}');
+      
+      // Handle POE wiki links - they use /wiki/ format
+      if(u.pathname.startsWith('/wiki/')) {
+        var title = decodeURIComponent(u.pathname.replace(/^\\/wiki\\//,'')).replace(/_/g,' ');
+        if(title) {
+          console.log('Wiki navigation to:', title);
+          e.preventDefault();
+          parent.postMessage({type:'wiki-nav', title:title}, '*');
+          return;
+        }
+      }
+      
+      // Handle traditional MediaWiki links with /w/ format
+      if(u.pathname.startsWith('/w/')) {
+        var title = u.searchParams.get('title') || decodeURIComponent(u.pathname.replace(/^\\/w\\//,'')).replace(/_/g,' ');
+        if(title) {
+          console.log('Wiki navigation to:', title);
+          e.preventDefault();
+          parent.postMessage({type:'wiki-nav', title:title}, '*');
+          return;
+        }
+      }
+      
+      console.log('Non-wiki link detected, allowing normal navigation');
+    }catch(err){
+      console.log('Error parsing link:', err, 'allowing normal navigation');
+    }
+  }, true);
+})();
+</scr` + `ipt>
+</body>
+</html>`;
+  }
+
+  // Fetch + render a page into the iframe
+  async function renderPage(title){
+    const url = `${API}?action=parse&format=json&formatversion=2&redirects=1` +
+                `&page=${encodeURIComponent(title)}&prop=text|headhtml&useskin=vector&origin=*`;
+    const data = await j(url);
+
+    const html  = data.parse.text;      // article HTML (.mw-parser-output inside)
+    const head  = data.parse.headhtml;  // full skin/site TemplateStyles bundle
+    const canon = data.parse.title;
+
+    currentTitle = canon;
+    if(!path.length) path=[canon];
+
+    document.getElementById('wikiFrame').srcdoc = buildSrcDoc({ html, head });
+    
+    // Update path history display
+    updatePathHistory();
+
+    // Win check
+    if (targetTitle && currentTitle === targetTitle) {
+      stopTimer();
+      showWinModal();
+    }
+  }
+
+  // Receive nav messages from iframe
+  window.addEventListener('message', (ev)=>{
+    if(!ev?.data) return;
+    
+    // Handle link logging
+    if(ev.data.type === 'link-log') {
+      console.log('Link attempted:', ev.data.href);
+      // You can also display this in the UI if desired
+      // For now, just logging to console
+    }
+    
+    // Handle wiki navigation
+    if(ev.data.type === 'wiki-nav') {
+      const nextTitle = ev.data.title;
+      clickCount++; document.getElementById('clicks').textContent = String(clickCount);
+      path.push(nextTitle);
+      renderPage(nextTitle);
+    }
+  });
+
+  async function newRound({keepStart=false, keepTarget=false} = {}){
+    stopTimer(); clickCount=0; path=[];
+    document.getElementById('clicks').textContent='0';
+    document.getElementById('timer').textContent='0:00';
+    document.getElementById('wikiFrame').srcdoc = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
+
+    // Get good titles (not too niche)
+    if(!keepStart) {
+      let attempts = 0;
+      do { 
+        const randomTitle = await randTitle();
+        console.log('Random title received:', randomTitle);
+        startTitle = await norm(randomTitle);
+        console.log('Normalized start title:', startTitle);
+        attempts++;
+        console.log(`Start title attempt ${attempts}: ${startTitle}`);
+        if (attempts > 50) {
+          console.error('Too many attempts to find start title, using fallback');
+          startTitle = 'Path of Exile';
+          break;
+        }
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } while(!startTitle || !isGoodTitle(startTitle));
+    }
+    if(!keepTarget){
+      let attempts = 0;
+      do { 
+        const randomTitle = await randTitle();
+        console.log('Random title received:', randomTitle);
+        targetTitle = await norm(randomTitle);
+        console.log('Normalized target title:', targetTitle);
+        attempts++;
+        console.log(`Target title attempt ${attempts}: ${targetTitle}, startTitle: ${startTitle}, isGood: ${isGoodTitle(targetTitle)}, isDifferent: ${targetTitle !== startTitle}`);
+        if (attempts > 50) {
+          console.error('Too many attempts to find target title, using fallback');
+          targetTitle = 'Exile';
+          break;
+        }
+        // Small delay to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 100));
+      } while(!targetTitle || targetTitle === startTitle || !isGoodTitle(targetTitle));
+    }
+
+
+    startTimer();
+    await renderPage(startTitle);
+    
+    // Fetch and display target preview
+    await fetchTargetPreview(targetTitle);
+    
+    // Update path history
+    updatePathHistory();
+  }
+
+  // Win modal functions
+  function showWinModal() {
+    const modal = document.getElementById('winModal');
+    const timeElapsed = Date.now() - startTimeMs;
+    
+    document.getElementById('winClicks').textContent = clickCount;
+    document.getElementById('winTime').textContent = fmtTime(timeElapsed);
+    
+    // Display path steps
+    const pathSteps = document.getElementById('winPathSteps');
+    if (path.length > 0) {
+      pathSteps.innerHTML = path.map((title, index) => {
+        return `
+          <div class="flex items-center">
+            <span class="text-slate-500">${index + 1}.</span>
+            <span class="ml-1">${title}</span>
+          </div>
+        `;
+      }).join('');
+    } else {
+      pathSteps.innerHTML = '<p class="text-slate-500">No path recorded</p>';
+    }
+    
+    modal.classList.remove('hidden');
+  }
+  
+  function hideWinModal() {
+    document.getElementById('winModal').classList.add('hidden');
+  }
+  
+  function generateChallengeLink() {
+    const url = new URL(window.location);
+    url.searchParams.set('start', startTitle);
+    url.searchParams.set('target', targetTitle);
+    return url.toString();
+  }
+  
+  function shareToTwitter() {
+    const timeElapsed = Date.now() - startTimeMs;
+    const text = `I completed the POE Wiki Game from "${startTitle}" to "${targetTitle}" in ${clickCount} clicks! 🎮 Can you beat my time?`;
+    const url = generateChallengeLink();
+    const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+    window.open(shareUrl, '_blank');
+  }
+  
+
+  
+  function copyChallengeLink() {
+    const link = generateChallengeLink();
+    navigator.clipboard.writeText(link).then(() => {
+      const btn = document.getElementById('btnCopyLink');
+      const originalText = btn.textContent;
+      btn.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.textContent = originalText;
+      }, 2000);
+    });
+  }
+  
+  // Event handlers
+  document.getElementById('btnNew').onclick     = () => newRound();
+  document.getElementById('btnCloseWin').onclick = () => { hideWinModal(); newRound(); };
+  document.getElementById('btnShareTwitter').onclick = shareToTwitter;
+
+  document.getElementById('btnCopyLink').onclick = copyChallengeLink;
+  
+  // Initialize with URL parameters if present
+  const urlParams = getUrlParams();
+  if (urlParams.start && urlParams.target) {
+    startTitle = urlParams.start;
+    targetTitle = urlParams.target;
+    startTimer();
+    renderPage(startTitle);
+    fetchTargetPreview(targetTitle);
+  } else {
+    newRound();
+  }
+  </script>
+</body>
+</html>
