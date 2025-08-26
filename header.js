@@ -74,7 +74,7 @@ function generateHeader() {
     <header class="bg-slate-800 border-b border-slate-700 shadow-lg">
       <div class="max-w-7xl mx-auto px-4 py-4">
         <!-- Main Header Row -->
-        <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center justify-between">
           <!-- Logo and Title -->
           <div class="flex items-center space-x-3">
             <div class="text-3xl">🎯</div>
@@ -84,34 +84,22 @@ function generateHeader() {
             </div>
           </div>
           
-          <!-- Current Game Badge -->
-          <div class="flex items-center space-x-2">
-            <span class="text-2xl">${currentGame.icon}</span>
-            <div class="text-right">
-              <div class="text-lg font-semibold ${currentGame.color}">${currentGame.name}</div>
-              <div class="text-xs text-slate-400">Current Game</div>
+          <!-- Current Game Badge and Home Link -->
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2">
+              <span class="text-2xl">${currentGame.icon}</span>
+              <div class="text-right">
+                <div class="text-lg font-semibold ${currentGame.color}">${currentGame.name}</div>
+                <div class="text-xs text-slate-400">Current Game</div>
+              </div>
             </div>
+            <a href="/" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+              <span class="text-lg">🏠</span>
+              <span class="hidden sm:inline">Home</span>
+              <span class="sm:hidden">Home</span>
+            </a>
           </div>
         </div>
-        
-        <!-- Navigation Tabs -->
-        <nav class="flex flex-wrap gap-2">
-          ${Object.entries(WIKI_GAMES).map(([key, game]) => {
-            const isActive = key === currentPage;
-            const activeClasses = isActive 
-              ? `${game.bgColor} text-white shadow-lg` 
-              : 'bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white';
-            
-            return `
-              <a href="${key}.html" 
-                 class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${activeClasses}">
-                <span class="text-lg">${game.icon}</span>
-                <span class="hidden sm:inline">${game.name}</span>
-                <span class="sm:hidden">${game.shortName}</span>
-              </a>
-            `;
-          }).join('')}
-        </nav>
       </div>
     </header>
   `;
@@ -138,27 +126,15 @@ function generateMobileHeader() {
             </div>
           </div>
           
-          <!-- Game Icon -->
-          <div class="text-2xl">${currentGame.icon}</div>
+          <!-- Game Icon and Home Link -->
+          <div class="flex items-center space-x-2">
+            <div class="text-2xl">${currentGame.icon}</div>
+            <a href="/" class="flex items-center space-x-1 px-2 py-1 rounded-md text-sm font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+              <span>🏠</span>
+              <span class="hidden xs:inline">Home</span>
+            </a>
+          </div>
         </div>
-        
-        <!-- Compact Navigation -->
-        <nav class="flex gap-1 mt-3 overflow-x-auto pb-2">
-          ${Object.entries(WIKI_GAMES).map(([key, game]) => {
-            const isActive = key === currentPage;
-            const activeClasses = isActive 
-              ? `${game.bgColor} text-white` 
-              : 'bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white';
-            
-            return `
-              <a href="${key}.html" 
-                 class="flex items-center space-x-1 px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${activeClasses} whitespace-nowrap">
-                <span>${game.icon}</span>
-                <span>${game.shortName}</span>
-              </a>
-            `;
-          }).join('')}
-        </nav>
       </div>
     </header>
   `;

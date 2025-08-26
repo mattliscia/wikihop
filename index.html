@@ -251,12 +251,12 @@
   <script>
     // Auto-insert header when page loads
     document.addEventListener('DOMContentLoaded', function() {
-      // For the landing page, we'll create a custom header since it's not a specific game
+      // For the landing page, we'll create a simple header
       const headerHTML = `
         <header class="bg-slate-800 border-b border-slate-700 shadow-lg">
           <div class="max-w-7xl mx-auto px-4 py-4">
             <!-- Main Header Row -->
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between">
               <!-- Logo and Title -->
               <div class="flex items-center space-x-3">
                 <div class="text-3xl">🎯</div>
@@ -266,7 +266,7 @@
                 </div>
               </div>
               
-              <!-- Current Game Badge -->
+              <!-- Home Badge -->
               <div class="flex items-center space-x-2">
                 <span class="text-2xl">🏠</span>
                 <div class="text-right">
@@ -275,40 +275,6 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Navigation Tabs -->
-            <nav class="flex flex-wrap gap-2">
-              <a href="index.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-blue-500 text-white shadow-lg">
-                <span class="text-lg">🏠</span>
-                <span class="hidden sm:inline">Home</span>
-                <span class="sm:hidden">Home</span>
-              </a>
-              <a href="osrs.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
-                <span class="text-lg">⚔️</span>
-                <span class="hidden sm:inline">Old School RuneScape</span>
-                <span class="sm:hidden">OSRS</span>
-              </a>
-              <a href="poe.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
-                <span class="text-lg">🔥</span>
-                <span class="hidden sm:inline">Path of Exile</span>
-                <span class="sm:hidden">PoE</span>
-              </a>
-              <a href="minecraft.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
-                <span class="text-lg">⛏️</span>
-                <span class="hidden sm:inline">Minecraft</span>
-                <span class="sm:hidden">MC</span>
-              </a>
-              <a href="fandom.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
-                <span class="text-lg">🌐</span>
-                <span class="hidden sm:inline">Fandom</span>
-                <span class="sm:hidden">Fandom</span>
-              </a>
-              <a href="wiki-gg.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
-                <span class="text-lg">🎮</span>
-                <span class="hidden sm:inline">Wiki.gg</span>
-                <span class="sm:hidden">Wiki.gg</span>
-              </a>
-            </nav>
           </div>
         </header>
       `;
