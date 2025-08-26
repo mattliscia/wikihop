@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>WikiHop - Navigate Through Your Favorite Wikis</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="header.js"></script>
+<style>
+  .game-card {
+    transition: all 0.3s ease;
+  }
+  .game-card:hover {
+    transform: translateY(-4px);
+  }
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+</style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+  <main class="p-4">
+    <!-- Hero Section -->
+    <div class="max-w-7xl mx-auto mb-12">
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          Welcome to WikiHop
+        </h1>
+        <p class="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
+          Navigate through your favorite wikis in this addictive link-following game. 
+          Start from a random page and find your way to the target using only wiki links!
+        </p>
+        <div class="flex flex-wrap justify-center gap-4 text-sm text-slate-400">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-green-400 rounded-full"></span>
+            <span>Track your path</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
+            <span>Beat your time</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
+            <span>Challenge friends</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Games Grid -->
+    <div class="max-w-7xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-8 text-white">Choose Your Wiki</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- OSRS -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-green-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">⚔️</div>
+            <div>
+              <h3 class="text-xl font-bold text-green-400">Old School RuneScape</h3>
+              <p class="text-sm text-slate-400">Navigate through the OSRS Wiki</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Explore the vast world of Gielinor through wiki pages. From quests to skills, 
+            find your way through the Old School RuneScape knowledge base.
+          </p>
+          <a href="osrs.html" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors">
+            Play OSRS Game
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Path of Exile -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-orange-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">🔥</div>
+            <div>
+              <h3 class="text-xl font-bold text-orange-400">Path of Exile</h3>
+              <p class="text-sm text-slate-400">Navigate through the Path of Exile Wiki</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Dive into the dark world of Wraeclast. Navigate through builds, items, 
+            and mechanics in this action RPG's comprehensive wiki.
+          </p>
+          <a href="poe.html" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
+            Play PoE Game
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Minecraft -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-emerald-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">⛏️</div>
+            <div>
+              <h3 class="text-xl font-bold text-emerald-400">Minecraft</h3>
+              <p class="text-sm text-slate-400">Navigate through the Minecraft Wiki</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Explore the blocky universe of Minecraft. From crafting recipes to redstone 
+            mechanics, navigate through endless possibilities.
+          </p>
+          <a href="minecraft.html" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors">
+            Play Minecraft Game
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Terraria -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-amber-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">🏗️</div>
+            <div>
+              <h3 class="text-xl font-bold text-amber-400">Terraria</h3>
+              <p class="text-sm text-slate-400">Navigate through the Terraria Wiki</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Journey through the 2D sandbox world of Terraria. Discover items, bosses, 
+            and building techniques in this adventure-packed wiki.
+          </p>
+          <a href="terraria.html" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors">
+            Play Terraria Game
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Fandom -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-blue-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">🌐</div>
+            <div>
+              <h3 class="text-xl font-bold text-blue-400">Fandom</h3>
+              <p class="text-sm text-slate-400">Navigate through Fandom Wikis</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Explore the vast network of Fandom wikis. From movies to games, 
+            navigate through countless fandoms and communities.
+          </p>
+          <a href="fandom.html" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors">
+            Play Fandom Game
+            <span>→</span>
+          </a>
+        </div>
+
+        <!-- Wiki.gg -->
+        <div class="game-card bg-slate-800 rounded-xl border border-slate-700 p-6 hover:border-purple-500/50">
+          <div class="flex items-center gap-4 mb-4">
+            <div class="text-4xl">🎮</div>
+            <div>
+              <h3 class="text-xl font-bold text-purple-400">Wiki.gg</h3>
+              <p class="text-sm text-slate-400">Navigate through Wiki.gg</p>
+            </div>
+          </div>
+          <p class="text-slate-300 mb-6">
+            Discover the modern wiki platform Wiki.gg. Navigate through 
+            game wikis and community-driven knowledge bases.
+          </p>
+          <a href="wiki-gg.html" class="inline-flex items-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors">
+            Play Wiki.gg Game
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Section -->
+    <div class="max-w-7xl mx-auto mt-16">
+      <div class="bg-slate-800 rounded-xl border border-slate-700 p-8">
+        <h2 class="text-3xl font-bold text-center mb-8 text-white">How to Play</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold">1</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-blue-400">Start Randomly</h3>
+            <p class="text-slate-300">
+              Each game begins on a random wiki page. Your starting point is different every time!
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold">2</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-green-400">Navigate Smartly</h3>
+            <p class="text-slate-300">
+              Click on internal wiki links to navigate. Find the shortest path to your target!
+            </p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold">3</span>
+            </div>
+            <h3 class="text-xl font-semibold mb-2 text-purple-400">Reach the Goal</h3>
+            <p class="text-slate-300">
+              Find your way to the target page. Track your clicks and time to beat your records!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="max-w-7xl mx-auto mt-16">
+      <h2 class="text-3xl font-bold text-center mb-8 text-white">Game Features</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div class="text-3xl mb-3">📊</div>
+          <h3 class="font-semibold mb-2 text-white">Track Stats</h3>
+          <p class="text-sm text-slate-400">Monitor your clicks and time for each attempt</p>
+        </div>
+        
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div class="text-3xl mb-3">🗺️</div>
+          <h3 class="font-semibold mb-2 text-white">Path History</h3>
+          <p class="text-sm text-slate-400">See your navigation path and revisit previous pages</p>
+        </div>
+        
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div class="text-3xl mb-3">🎯</div>
+          <h3 class="font-semibold mb-2 text-white">Target Preview</h3>
+          <p class="text-sm text-slate-400">Get a glimpse of your destination with images and descriptions</p>
+        </div>
+        
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700">
+          <div class="text-3xl mb-3">🔗</div>
+          <h3 class="font-semibold mb-2 text-white">Share Challenges</h3>
+          <p class="text-sm text-slate-400">Share specific challenges with friends via links</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="max-w-7xl mx-auto mt-16 pt-8 border-t border-slate-700">
+      <div class="text-center text-slate-400">
+        <p class="mb-2">🎯 WikiHop - Navigate through your favorite wikis</p>
+        <p class="text-sm">Challenge yourself and your friends to find the shortest path between wiki pages!</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Auto-insert header when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      // For the landing page, we'll create a custom header since it's not a specific game
+      const headerHTML = `
+        <header class="bg-slate-800 border-b border-slate-700 shadow-lg">
+          <div class="max-w-7xl mx-auto px-4 py-4">
+            <!-- Main Header Row -->
+            <div class="flex items-center justify-between mb-4">
+              <!-- Logo and Title -->
+              <div class="flex items-center space-x-3">
+                <div class="text-3xl">🎯</div>
+                <div>
+                  <h1 class="text-2xl font-bold text-white">WikiHop</h1>
+                  <p class="text-sm text-slate-400">Navigate from start to target using only wiki links</p>
+                </div>
+              </div>
+              
+              <!-- Current Game Badge -->
+              <div class="flex items-center space-x-2">
+                <span class="text-2xl">🏠</span>
+                <div class="text-right">
+                  <div class="text-lg font-semibold text-blue-400">Home</div>
+                  <div class="text-xs text-slate-400">Choose Your Game</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex flex-wrap gap-2">
+              <a href="index.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-blue-500 text-white shadow-lg">
+                <span class="text-lg">🏠</span>
+                <span class="hidden sm:inline">Home</span>
+                <span class="sm:hidden">Home</span>
+              </a>
+              <a href="osrs.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+                <span class="text-lg">⚔️</span>
+                <span class="hidden sm:inline">Old School RuneScape</span>
+                <span class="sm:hidden">OSRS</span>
+              </a>
+              <a href="poe.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+                <span class="text-lg">🔥</span>
+                <span class="hidden sm:inline">Path of Exile</span>
+                <span class="sm:hidden">PoE</span>
+              </a>
+              <a href="minecraft.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+                <span class="text-lg">⛏️</span>
+                <span class="hidden sm:inline">Minecraft</span>
+                <span class="sm:hidden">MC</span>
+              </a>
+              <a href="fandom.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+                <span class="text-lg">🌐</span>
+                <span class="hidden sm:inline">Fandom</span>
+                <span class="sm:hidden">Fandom</span>
+              </a>
+              <a href="wiki-gg.html" class="flex items-center space-x-2 px-4 py-2 rounded-lg font-medium bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white transition-all duration-200">
+                <span class="text-lg">🎮</span>
+                <span class="hidden sm:inline">Wiki.gg</span>
+                <span class="sm:hidden">Wiki.gg</span>
+              </a>
+            </nav>
+          </div>
+        </header>
+      `;
+      
+      // Insert at the beginning of the body
+      const body = document.body;
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = headerHTML;
+      body.insertBefore(tempDiv.firstElementChild, body.firstChild);
+    });
+  </script>
+</body>
+</html>
