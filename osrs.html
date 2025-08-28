@@ -3,7 +3,51 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>OSRS Wiki Game – srcdoc embed</title>
+<title>OSRS Wiki Game - Navigate from Start to Target | Old School RuneScape</title>
+
+<!-- Meta Description -->
+<meta name="description" content="Play the OSRS Wiki Game! Navigate from one Old School RuneScape wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+
+<!-- Keywords -->
+<meta name="keywords" content="OSRS, Old School RuneScape, wiki game, navigation game, RuneScape, gaming, wiki challenge" />
+
+<!-- Author -->
+<meta name="author" content="WikiHop" />
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+<link rel="manifest" href="images/favicon/site.webmanifest">
+<link rel="shortcut icon" href="images/favicon/favicon.ico">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wikihop.net/osrs" />
+<meta property="og:title" content="OSRS Wiki Game - Navigate from Start to Target" />
+<meta property="og:description" content="Play the OSRS Wiki Game! Navigate from one Old School RuneScape wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+<meta property="og:image" content="https://wikihop.net/images/logo.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="WikiHop" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://wikihop.net/osrs" />
+<meta property="twitter:title" content="OSRS Wiki Game - Navigate from Start to Target" />
+<meta property="twitter:description" content="Play the OSRS Wiki Game! Navigate from one Old School RuneScape wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+<meta property="twitter:image" content="https://wikihop.net/images/logo.png" />
+
+<!-- Additional Meta Tags -->
+<meta name="robots" content="index, follow" />
+<meta name="language" content="English" />
+<meta name="revisit-after" content="7 days" />
+<meta name="theme-color" content="#1e293b" />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://oldschool.runescape.wiki">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="header.js"></script>
 </head>
@@ -71,11 +115,14 @@
         <!-- Sidebar (25%) -->
         <div class="w-80 flex-shrink-0">
           <!-- Game Stats -->
-          <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
-            <div class="flex justify-between items-center mb-3">
-              <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
+                  <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
+          <div class="flex justify-between items-center mb-3">
+            <h3 class="hidden text-lg font-semibold text-yellow-400">Game Stats</h3>
+            <div class="flex gap-2">
+              <button id="btnCopyChallenge" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">Copy Challenge</button>
               <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
             </div>
+          </div>
             <div class="grid grid-cols-2 gap-3 text-sm">
               <div class="bg-slate-700 rounded p-2">
                 <div class="text-slate-400">Clicks</div>
@@ -528,6 +575,12 @@ ${safeHead}
       clickCount++; 
       document.getElementById('clicks').textContent = String(clickCount);
       document.getElementById('clicksMobile').textContent = String(clickCount);
+      
+      // Start timer on first click
+      if (clickCount === 1) {
+        startTimer();
+      }
+      
       path.push(nextTitle);
       renderPage(nextTitle);
     }
@@ -539,7 +592,64 @@ ${safeHead}
     document.getElementById('clicksMobile').textContent='0';
     document.getElementById('timer').textContent='0:00';
     document.getElementById('timerMobile').textContent='0:00';
-    const loadingHtml = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
+    const loadingHtml = `<!doctype html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #64748b;
+  }
+  
+  .loading-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #475569;
+    margin: 0;
+  }
+  
+  .loading-subtitle {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin: 0.5rem 0 0 0;
+  }
+</style>
+</head>
+<body>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading OSRS Wiki...</p>
+    <p class="loading-subtitle">Preparing your navigation challenge</p>
+  </div>
+</body>
+</html>`;
     document.getElementById('wikiFrame').srcdoc = loadingHtml;
     document.getElementById('wikiFrameMobile').srcdoc = loadingHtml;
 
@@ -554,7 +664,6 @@ ${safeHead}
     }
 
 
-    startTimer();
     await renderPage(startTitle);
     
     // Fetch and display target preview
@@ -613,11 +722,19 @@ ${safeHead}
   function copyChallengeLink() {
     const link = generateChallengeLink();
     navigator.clipboard.writeText(link).then(() => {
-      const btn = document.getElementById('btnCopyLink');
-      const originalText = btn.textContent;
-      btn.textContent = 'Copied!';
+      // Update both copy buttons
+      const btnCopyLink = document.getElementById('btnCopyLink');
+      const btnCopyChallenge = document.getElementById('btnCopyChallenge');
+      
+      const originalTextLink = btnCopyLink.textContent;
+      const originalTextChallenge = btnCopyChallenge.textContent;
+      
+      btnCopyLink.textContent = 'Copied!';
+      btnCopyChallenge.textContent = 'Challenge Copied!';
+      
       setTimeout(() => {
-        btn.textContent = originalText;
+        btnCopyLink.textContent = originalTextLink;
+        btnCopyChallenge.textContent = originalTextChallenge;
       }, 2000);
     });
   }
@@ -625,6 +742,7 @@ ${safeHead}
   // Event handlers
   document.getElementById('btnNew').onclick     = () => newRound();
   document.getElementById('btnNewMobile').onclick = () => newRound();
+  document.getElementById('btnCopyChallenge').onclick = copyChallengeLink;
   document.getElementById('btnCloseWin').onclick = () => { hideWinModal(); newRound(); };
   document.getElementById('btnShareTwitter').onclick = shareToTwitter;
   document.getElementById('btnCopyLink').onclick = copyChallengeLink;
@@ -634,7 +752,6 @@ ${safeHead}
   if (urlParams.start && urlParams.target) {
     startTitle = urlParams.start;
     targetTitle = urlParams.target;
-    startTimer();
     renderPage(startTitle);
     fetchTargetPreview(targetTitle);
   } else {

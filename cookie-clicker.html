@@ -3,7 +3,51 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Cookie Clicker Game – srcdoc embed</title>
+<title>Cookie Clicker Wiki Game - Navigate from Start to Target | Cookie Clicker</title>
+
+<!-- Meta Description -->
+<meta name="description" content="Play the Cookie Clicker Wiki Game! Navigate from one Cookie Clicker wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+
+<!-- Keywords -->
+<meta name="keywords" content="Cookie Clicker, wiki game, navigation game, Cookie Clicker wiki, gaming, wiki challenge, browser game, idle game" />
+
+<!-- Author -->
+<meta name="author" content="WikiHop" />
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon/favicon-16x16.png">
+<link rel="manifest" href="images/favicon/site.webmanifest">
+<link rel="shortcut icon" href="images/favicon/favicon.ico">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wikihop.net/cookie-clicker" />
+<meta property="og:title" content="Cookie Clicker Wiki Game - Navigate from Start to Target" />
+<meta property="og:description" content="Play the Cookie Clicker Wiki Game! Navigate from one Cookie Clicker wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+<meta property="og:image" content="https://wikihop.net/images/logo.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:site_name" content="WikiHop" />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://wikihop.net/cookie-clicker" />
+<meta property="twitter:title" content="Cookie Clicker Wiki Game - Navigate from Start to Target" />
+<meta property="twitter:description" content="Play the Cookie Clicker Wiki Game! Navigate from one Cookie Clicker wiki page to another using only internal links. Challenge your friends and see who can reach the target in fewer clicks." />
+<meta property="twitter:image" content="https://wikihop.net/images/logo.png" />
+
+<!-- Additional Meta Tags -->
+<meta name="robots" content="index, follow" />
+<meta name="language" content="English" />
+<meta name="revisit-after" content="7 days" />
+<meta name="theme-color" content="#1e293b" />
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://cdn.tailwindcss.com">
+<link rel="preconnect" href="https://cookieclicker.fandom.com">
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="header.js"></script>
 </head>
@@ -28,8 +72,11 @@
         <!-- Game Stats -->
         <div class="bg-slate-800 rounded-lg border border-slate-700 p-4 mb-4">
           <div class="flex justify-between items-center mb-3">
-            <h3 class="text-lg font-semibold text-yellow-400">Game Stats</h3>
-            <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
+            <h3 class="hidden font-semibold text-yellow-400">Game Stats</h3>
+            <div class="flex gap-2">
+              <button id="btnCopyChallenge" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">Copy Challenge</button>
+              <button id="btnNew" class="px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm">New round</button>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-3 text-sm">
             <div class="bg-slate-700 rounded p-2">
@@ -239,6 +286,7 @@
   }
   
   // Fetch target preview with image
+  // Fetch target preview with image
   async function fetchTargetPreview(title) {
     try {
       // Fetch page content
@@ -250,6 +298,9 @@
       const tempDiv = document.createElement('div');
       tempDiv.innerHTML = data.parse.text;
       
+      // Update destination title (always set this)
+      document.getElementById('destTitle').textContent = title;
+      
       // Find the first paragraph that's not inside an infobox
       const allParagraphs = tempDiv.querySelectorAll('.mw-parser-output p');
       let firstP = null;
@@ -257,7 +308,9 @@
       for (const p of allParagraphs) {
         // Check if this paragraph is inside an infobox
         const isInInfobox = p.closest('.infobox') !== null;
-        if (!isInInfobox) {
+        // Make sure paragraph has non-empty text content
+        const text = p.textContent.trim();
+        if (!isInInfobox && text.length > 0) {
           firstP = p;
           break;
         }
@@ -272,89 +325,77 @@
           text = text.substring(0, 200) + '...';
         }
         
-        // Update destination info
-        document.getElementById('destTitle').textContent = title;
+        // Update destination description
         document.getElementById('destDescription').textContent = text;
-        
-        // Try to find and display an image
-        const images = data.parse.images || [];
-        console.log('Available images:', images);
-        
-        let imageFile = null;
-        for (const img of images) {
-          if (img.toLowerCase().includes('.png') || 
-              img.toLowerCase().includes('.jpg') || 
-              img.toLowerCase().includes('.jpeg') ||
-              img.toLowerCase().includes('.webp')) {
-            
-            // Check if this image is within a messagebox or message-box element
-            const imgElement = tempDiv.querySelector(`img[alt="${img}"]`);
-            if (imgElement) {
-              const messageboxParent = imgElement.closest('.messagebox, .message-box');
-              if (!messageboxParent) {
-                imageFile = img;
-                break;
-              }
-            } else {
-              // If we can't find the img element, assume it's safe to use
-              imageFile = img;
-              break;
-            }
-          }
-        }
-        
-        if (imageFile) {
-          console.log('Selected image file:', imageFile);
-          
-          // Look for the actual image URL in the HTML content
-          console.log('Looking for img with alt="' + imageFile + '"');
-          const imgElement = tempDiv.querySelector(`img[alt="${imageFile}"]`);
-          console.log('Found img element:', imgElement);
-          
-          // If not found by alt, try finding any img element
-          if (!imgElement) {
-            const allImgs = tempDiv.querySelectorAll('img');
-            console.log('All img elements:', allImgs);
-            const firstImg = allImgs[0];
-            if (firstImg) {
-              console.log('Using first img element:', firstImg);
-            }
-          }
-          
-          const imgToUse = imgElement || tempDiv.querySelector('img');
-          if (imgToUse) {
-            let imageUrl = imgToUse.src;
-            console.log('Found image URL in HTML:', imageUrl);
-            
-            // Handle URLs that already have localhost (browser-processed relative URLs)
-            if (imageUrl.includes('localhost:8000')) {
-              // Extract the path part after localhost:8000
-              const urlParts = imageUrl.split('localhost:8000');
-              if (urlParts.length > 1) {
-                imageUrl = SITE + urlParts[1];
-              }
-            } else if (imageUrl.startsWith('/')) {
-              // Convert relative URL to absolute URL
-              imageUrl = SITE + imageUrl;
-            } else if (imageUrl.startsWith('file://')) {
-              // Handle file:// URLs by converting to proper domain
-              imageUrl = imageUrl.replace('file://', SITE);
-            } else if (!imageUrl.startsWith('http')) {
-              // Handle other relative URLs
-              imageUrl = SITE + "/" + imageUrl;
-            }
-            // If it already starts with http, leave it as is
-            
-            console.log('Final image URL:', imageUrl);
-            document.getElementById('destImageSrc').src = imageUrl;
-            document.getElementById('destImage').classList.remove('hidden');
-          } else {
-            console.log('No matching img element found, hiding image');
-            document.getElementById('destImage').classList.add('hidden');
-          }
+      } else {
+        // No paragraph found, set a fallback description
+        document.getElementById('destDescription').textContent = 'No description available.';
+      }
+      
+      // Try to find and display an image
+      const allImgs = tempDiv.querySelectorAll('img');
+      console.log('All img elements:', allImgs);
+      
+      // Find the first image that's not within a messagebox or message-box element
+      let imgToUse = null;
+      for (const img of allImgs) {
+        // Check if this image is within a messagebox or message-box element
+        const messageboxParent = img.closest('.messagebox, .message-box, .message_box, .messagebox-container');
+        if (!messageboxParent) {
+          console.log('Found suitable image (not in message-box):', img);
+          imgToUse = img;
+          break;
         } else {
-          document.getElementById('destImage').classList.add('hidden');
+          console.log('Skipping image (in message-box):', img);
         }
+      }
+      
+      if (imgToUse) {
+        console.log('Selected image:', imgToUse);
+        let imageUrl = imgToUse.src;
+        console.log('Found image URL in HTML:', imageUrl);
+        
+        // Handle URL processing
+        if (imageUrl.includes('localhost:8000')) {
+          // Extract the path part after localhost:8000
+          const urlParts = imageUrl.split('localhost:8000');
+          if (urlParts.length > 1) {
+            imageUrl = SITE + urlParts[1];
+          }
+        } else if (imageUrl.includes(window.location.hostname)) {
+          // Replace references to our domain with the target domain
+          console.log('Found current hostname in URL');
+          console.log('window.location.hostname:', window.location.hostname);
+
+          let hostname = window.location.hostname;
+          if (hostname === 'localhost') {
+            hostname = 'localhost:8000';
+          }
+          
+          const urlParts = imageUrl.split(hostname);
+          console.log('URL Parts:', urlParts);
+          if (urlParts.length > 1) {
+            imageUrl = `https://terraria.wiki.gg${urlParts[1]}`;
+            console.log('After hostname replacement:', imageUrl);
+          }
+        } else if (imageUrl.startsWith('/')) {
+          // Convert relative URL to absolute URL
+          imageUrl = SITE + imageUrl;
+        } else if (imageUrl.startsWith('file://')) {
+          // Handle file:// URLs by converting to proper domain
+          imageUrl = imageUrl.replace('file://', SITE);
+        } else if (!imageUrl.startsWith('http')) {
+          // Handle other relative URLs
+          imageUrl = SITE + "/" + imageUrl;
+        }
+        // If it already starts with http, leave it as is
+        
+        console.log('Final image URL:', imageUrl);
+        document.getElementById('destImageSrc').src = imageUrl;
+        document.getElementById('destImage').classList.remove('hidden');
+      } else {
+        console.log('No suitable image found, hiding image');
+        document.getElementById('destImage').classList.add('hidden');
       }
     } catch (err) {
       console.log('Could not fetch target preview:', err);
@@ -553,8 +594,65 @@ ${processedHead}
     stopTimer(); clickCount=0; path=[];
     document.getElementById('clicks').textContent='0';
     document.getElementById('timer').textContent='0:00';
-    document.getElementById('wikiFrame').srcdoc = '<!doctype html><body style="font:14px system-ui;padding:16px;color:#64748b">Loading…</body>';
-
+    const loadingHtml = `<!doctype html>
+<html>
+<head>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    color: #64748b;
+  }
+  
+  .loading-container {
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #e2e8f0;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #475569;
+    margin: 0;
+  }
+  
+  .loading-subtitle {
+    font-size: 0.875rem;
+    color: #94a3b8;
+    margin: 0.5rem 0 0 0;
+  }
+</style>
+</head>
+<body>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p class="loading-text">Loading Cookie Clicker Wiki...</p>
+    <p class="loading-subtitle">Preparing your navigation challenge</p>
+  </div>
+</body>
+</html>`;
+    document.getElementById('wikiFrame').srcdoc = loadingHtml;
     // Get good titles (not too niche)
     if(!keepStart) {
       do { startTitle = await norm(await randTitle()); } while(!isGoodTitle(startTitle));
@@ -626,17 +724,26 @@ ${processedHead}
   function copyChallengeLink() {
     const link = generateChallengeLink();
     navigator.clipboard.writeText(link).then(() => {
-      const btn = document.getElementById('btnCopyLink');
-      const originalText = btn.textContent;
-      btn.textContent = 'Copied!';
+      // Update both copy buttons
+      const btnCopyLink = document.getElementById('btnCopyLink');
+      const btnCopyChallenge = document.getElementById('btnCopyChallenge');
+      
+      const originalTextLink = btnCopyLink.textContent;
+      const originalTextChallenge = btnCopyChallenge.textContent;
+      
+      btnCopyLink.textContent = 'Copied!';
+      btnCopyChallenge.textContent = 'Challenge Copied!';
+      
       setTimeout(() => {
-        btn.textContent = originalText;
+        btnCopyLink.textContent = originalTextLink;
+        btnCopyChallenge.textContent = originalTextChallenge;
       }, 2000);
     });
   }
   
   // Event handlers
   document.getElementById('btnNew').onclick     = () => newRound();
+  document.getElementById('btnCopyChallenge').onclick = copyChallengeLink;
   document.getElementById('btnCloseWin').onclick = () => { hideWinModal(); newRound(); };
   document.getElementById('btnShareTwitter').onclick = shareToTwitter;
   document.getElementById('btnCopyLink').onclick = copyChallengeLink;
