@@ -80,10 +80,6 @@
             <span>Track your path</span>
           </div>
           <div class="flex items-center gap-2">
-            <span class="w-2 h-2 bg-blue-400 rounded-full"></span>
-            <span>Beat your time</span>
-          </div>
-          <div class="flex items-center gap-2">
             <span class="w-2 h-2 bg-purple-400 rounded-full"></span>
             <span>Challenge friends</span>
           </div>
@@ -93,7 +89,7 @@
 
     <!-- Games Grid -->
     <div class="max-w-7xl mx-auto">
-      <h2 class="text-3xl font-bold text-center mb-8 text-white">Choose Your Wiki</h2>
+      <h2 class="text-3xl font-bold text-center mb-8 text-white">Choose Which Wiki You Want To Play</h2>
       
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- OSRS -->
@@ -106,7 +102,7 @@
             </div>
           </div>
 
-          <a href="osrs.html" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/osrs" class="inline-flex items-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors">
             Play OSRS Game
             <span>→</span>
           </a>
@@ -122,7 +118,7 @@
             </div>
           </div>
 
-          <a href="poe.html" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/poe" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
             Play PoE Game
             <span>→</span>
           </a>
@@ -138,7 +134,7 @@
             </div>
           </div>
 
-          <a href="warcraft.html" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/warcraft" class="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors">
             Play Warcraft Game
             <span>→</span>
           </a>
@@ -154,7 +150,7 @@
             </div>
           </div>
 
-          <a href="cookie-clicker.html" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/cookie-clicker" class="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-lg transition-colors">
             Play Cookie Clicker Game
             <span>→</span>
           </a>
@@ -170,7 +166,7 @@
             </div>
           </div>
 
-          <a href="terraria.html" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/terraria" class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
             Play Terraria Game
             <span>→</span>
           </a>
@@ -186,7 +182,7 @@
             </div>
           </div>
 
-          <a href="minecraft.html" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors">
+          <a href="/minecraft" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-lg transition-colors">
             Play Minecraft Game
             <span>→</span>
           </a>
@@ -206,6 +202,47 @@
             Coming Soon
             <span>⏳</span>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Challenge Friends CTA -->
+    <div class="max-w-7xl mx-auto mt-16">
+      <div class="bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl p-8 text-center">
+        <div class="max-w-3xl mx-auto">
+          <h2 class="text-3xl font-bold mb-4 text-white">Challenge Your Friends!</h2>
+          <p class="text-xl text-purple-100 mb-6">
+            Share your challenge links and see who can navigate from start to target in the fewest clicks. 
+            Every game generates a unique link you can send to friends!
+          </p>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+              <div class="text-2xl mb-2">🎮</div>
+              <p class="text-sm text-white font-semibold">Play a Game</p>
+              <p class="text-xs text-purple-100">Choose any wiki above</p>
+            </div>
+            
+            <div class="text-2xl text-white">→</div>
+            
+            <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+              <div class="text-2xl mb-2">📋</div>
+              <p class="text-sm text-white font-semibold">Copy Challenge</p>
+              <p class="text-xs text-purple-100">Click the "Copy Challenge" button</p>
+            </div>
+            
+            <div class="text-2xl text-white">→</div>
+            
+            <div class="bg-white/20 backdrop-blur-sm rounded-lg p-4">
+              <div class="text-2xl mb-2">👥</div>
+              <p class="text-sm text-white font-semibold">Share & Compete</p>
+              <p class="text-xs text-purple-100">Send to friends and compare scores!</p>
+            </div>
+          </div>
+          
+          <p class="text-sm text-purple-100 mt-6">
+            <strong>Pro tip:</strong> The timer only starts when you click your first link, so take your time reading the starting page!
+          </p>
         </div>
       </div>
     </div>
@@ -249,6 +286,70 @@
       </div>
     </div>
 
+    <!-- Feedback Section -->
+    <div class="max-w-7xl mx-auto mt-16">
+      <div class="bg-slate-800 rounded-xl border border-slate-700 p-8">
+        <h2 class="text-3xl font-bold text-center mb-8 text-white">Help Us Improve WikiHop</h2>
+        
+        <div class="text-center mb-8">
+          <p class="text-lg text-slate-300 mb-6">
+            We'd love to hear your feedback and suggestions to make WikiHop even better!
+          </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-slate-700 rounded-lg p-6">
+              <div class="text-3xl mb-3">🌐</div>
+              <h3 class="text-lg font-semibold mb-2 text-blue-400">New Wikis</h3>
+              <p class="text-sm text-slate-300">
+                Suggest new wiki sites to add to WikiHop. What games, topics, or communities would you like to see?
+              </p>
+            </div>
+            
+            <div class="bg-slate-700 rounded-lg p-6">
+              <div class="text-3xl mb-3">🔍</div>
+              <h3 class="text-lg font-semibold mb-2 text-green-400">Page Filtering</h3>
+              <p class="text-sm text-slate-300">
+                Help us identify pages that should be filtered out from games (like disambiguation pages, transcripts, etc.).
+              </p>
+            </div>
+            
+            <div class="bg-slate-700 rounded-lg p-6">
+              <div class="text-3xl mb-3">💡</div>
+              <h3 class="text-lg font-semibold mb-2 text-purple-400">Feature Requests</h3>
+              <p class="text-sm text-slate-300">
+                Share ideas for new features, improvements, or any other suggestions to enhance the game experience.
+              </p>
+            </div>
+          </div>
+          
+          <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <a href="https://twitter.com/spr3adsh33t" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+              </svg>
+              DM on X (Twitter)
+            </a>
+            
+            <a href="https://www.reddit.com/message/compose/?to=mattlisca" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               class="inline-flex items-center gap-2 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+              </svg>
+              Message on Reddit
+            </a>
+          </div>
+          
+          <p class="text-sm text-slate-400 mt-6">
+            Your feedback helps us create a better experience for everyone. We read every message!
+          </p>
+        </div>
+      </div>
+    </div>
 
     <!-- Footer -->
     
